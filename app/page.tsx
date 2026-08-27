@@ -1,16 +1,17 @@
 export const dynamic = "force-dynamic";
 import Link from "next/link";
-import { ArrowRight, BriefcaseBusiness, MapPin, Play, Trophy } from "lucide-react";
+import { BriefcaseBusiness, MapPin, Play, Trophy } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { HomeHero } from "@/components/HomeHero";
 
 const youth=[['💃','Classical Dance','cultural-performances'],['📖','Spiritual Story','educational-content'],['🥁','Hari Naam Kirtan','devotional-videos'],['🎵','Spiritual Song','singing'],['📜','Sloka Recitation','devotional-videos']];
 const kids=[['🩰','Classical Dance','kids-content'],['📚','Spiritual Story','kids-content'],['🥁','Hari Naam Kirtan','kids-content'],['🎶','Spiritual Song','kids-content'],['🪶','Sloka Recitation','kids-content']];
 const memories=[
- {name:'Vedic Birthday Celebration with Kirtan',slug:'birthday',img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=500&q=80'},
- {name:'Vedic Pre-Wedding Video',slug:'wedding',img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&q=80'},
- {name:'Vedic Wedding Video',slug:'wedding',img:'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=500&q=80'},
- {name:'Vedic Anniversary Video',slug:'wedding-anniversary',img:'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80'},
- {name:'Vedic Annaprashan Video',slug:'other-celebrations',img:'https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=500&q=80'}
+ {name:'Vedic Birthday Celebration with Kirtan',slug:'birthday',img:'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=700&q=82'},
+ {name:'Vedic Pre-Wedding Video',slug:'wedding',img:'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=700&q=82'},
+ {name:'Vedic Wedding Video',slug:'wedding',img:'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=700&q=82'},
+ {name:'Vedic Anniversary Video',slug:'wedding-anniversary',img:'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=700&q=82'},
+ {name:'Vedic Annaprashan Video',slug:'other-celebrations',img:'https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&w=700&q=82'}
 ];
 
 export default async function HomePage(){
@@ -20,13 +21,13 @@ export default async function HomePage(){
   supabase.from("public_videos").select("id,title,participant_name,thumbnail_url,content_type").in("status",["published","featured"]).order("is_featured",{ascending:false}).limit(4)
  ]);
  return <div className="page">
- <section className="hero-banner"><div className="hero-copy"><h1>Serve. Share.<br/><span className="gold">Spread Krishna Consciousness</span></h1><p>Join our spiritual community, share your talent and celebrate meaningful moments together.</p><Link className="hero-cta" href="/contests">Join Our Mission <ArrowRight size={14}/></Link></div><div className="hero-dots"><i/><i/><i/><i/></div></section>
+ <HomeHero/>
  <section className="section"><div className="section-head"><div><h2>🌼 Free Services</h2></div><Link className="section-link" href="/contests">See all</Link></div><div className="service-panel"><div className="service-title"><strong>Spiritual Youth Services</strong></div><div className="service-rail">{youth.map(([icon,name,slug])=><Link className="service-card" href={`/contests?category=${slug}`} key={name}><div className="art">{icon}</div><strong>{name}</strong></Link>)}</div></div></section>
  <section className="section"><div className="section-head"><div><h2>🏅 Spiritual Memories — Starting ₹999</h2></div><Link className="section-link" href="/events">See all</Link></div><div className="service-rail">{memories.map(m=><Link href={`/events/submit?category=${m.slug}`} className="memory-card" key={m.name}><div className="photo" style={{backgroundImage:`url(${m.img})`}}/><strong>{m.name}</strong></Link>)}</div></section>
  <section className="section"><div className="service-panel kids"><div className="service-title"><strong>🧒 Spiritual Kids Services</strong><Link className="section-link" href="/contests?category=kids-content">See all</Link></div><div className="service-rail">{kids.map(([icon,name,slug])=><Link className="service-card" href={`/contests?category=${slug}`} key={name}><div className="art">{icon}</div><strong>{name}</strong></Link>)}</div></div></section>
  <section className="section"><div className="section-head"><div><h2><Trophy size={19}/> Current Contests</h2></div><Link className="section-link" href="/contests">View all</Link></div><div className="contest-rail">{(contests||[]).map((c:any)=><Link className="mini-contest" href={`/contests/${c.slug}`} key={c.id}><h3>{c.title}</h3><p>{c.description}</p><span className="hero-cta">Participate Now</span><span className="emoji">{c.contest_categories?.name?.includes('Singing')?'🎙️':'🏆'}</span></Link>)}</div></section>
- <section className="section"><div className="section-head"><div><h2><BriefcaseBusiness size={19}/> Featured Businesses</h2></div><Link className="section-link" href="/businesses">See all</Link></div><div className="business-grid">{(businesses||[]).map((b:any)=><Link className="business-card" href={`/businesses/${b.slug}`} key={b.id}><div className="business-thumb" style={{backgroundImage:`url(${b.photos?.[0]||'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=80'})`}}/><div className="business-body"><h3>{b.name}</h3><p>{b.business_categories?.name}</p><span className="location"><MapPin size={10}/>{b.city}, {b.state}</span></div></Link>)}</div></section>
+ <section className="section"><div className="section-head"><div><h2><BriefcaseBusiness size={19}/> Featured Businesses</h2></div><Link className="section-link" href="/businesses">See all</Link></div><div className="business-grid">{(businesses||[]).map((b:any)=><Link className="business-card" href={`/businesses/${b.slug}`} key={b.id}><div className="business-thumb" style={{backgroundImage:`url(${b.photos?.[0]||'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=82'})`}}/><div className="business-body"><h3>{b.name}</h3><p>{b.business_categories?.name}</p><span className="location"><MapPin size={10}/>{b.city}, {b.state}</span></div></Link>)}</div></section>
  <section className="section"><div className="section-head"><div><h2><Play size={19}/> Latest Public Videos</h2><p>Approved content is visible without login.</p></div><Link className="section-link" href="/videos">Watch all</Link></div><div className="video-grid">{(videos||[]).map((v:any)=><Link className="video-card" href={`/videos/${v.id}`} key={v.id}><div className="video-thumb" style={{backgroundImage:`url(${v.thumbnail_url})`}}><span className="play-orb"><Play size={20} fill="currentColor"/></span></div><div className="video-copy"><span>{v.content_type}</span><h3>{v.title}</h3><p>{v.participant_name}</p></div></Link>)}</div></section>
- <section className="section winner-hero"><h1>Selected winners get opportunities for <span className="gold">professional podcast shoots</span>.</h1><p>Selected participants may also be considered for international travel opportunities.</p><Link className="hero-cta" href="/winners">Explore Winners <ArrowRight size={14}/></Link></section>
+ <section className="section winner-hero"><h1>Selected winners get opportunities for <span className="gold">professional podcast shoots</span>.</h1><p>Selected participants may also be considered for international travel opportunities.</p><Link className="hero-cta" href="/winners">Explore Winners</Link></section>
  </div>;
 }
