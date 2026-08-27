@@ -1,20 +1,21 @@
-import Link from "next/link";
-import { BriefcaseBusiness, MapPin } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { MapPin, Phone, Search } from "lucide-react";
 
-export default async function BusinessesPage() {
-  const [{ data: categories }, { data: businesses }, { data: plans }] = await Promise.all([
-    supabase.from("business_categories").select("id,name,slug").eq("is_active", true).order("sort_order"),
-    supabase.from("businesses").select("id,name,slug,description,city,state,services,is_featured,business_categories(name)").eq("status", "approved").order("is_featured", { ascending: false }).limit(24),
-    supabase.from("business_plans").select("id,name,monthly_price,annual_price,badge,features").eq("is_active", true).order("priority"),
-  ]);
-  return <div className="page">
-    <div className="section-head"><div><h2>Business Directory</h2><p>Discover services and register your own business.</p></div><Link className="section-link" href="/businesses/register">Add business</Link></div>
-    <div className="category-row">{(categories ?? []).map((c:any)=><span className="category-chip" key={c.id}>{c.name}</span>)}</div>
-    <section className="section">
-      <div className="section-head"><div><h2>Featured & Approved</h2></div></div>
-      {businesses?.length ? <div className="cards">{businesses.map((item:any)=><Link className="card" href={`/businesses/${item.slug}`} key={item.id}><div className="card-body"><span className="card-kicker">{item.business_categories?.name ?? "Business"}</span><h3>{item.name}</h3><p>{item.description || "Business profile on Sri Gaur Nitai."}</p><div className="card-meta"><span className="tag"><MapPin size={11}/> {item.city || "India"}</span>{item.is_featured && <span className="tag">Featured</span>}</div></div></Link>)}</div> : <div className="empty-state"><BriefcaseBusiness/><h3>Be among the first listed businesses</h3><p>Approved listings will appear here after registration and review.</p><div className="hero-actions" style={{justifyContent:"center"}}><Link className="btn btn-primary" href="/businesses/register">Register Business</Link></div></div>}
-    </section>
-    <section className="section"><div className="section-head"><div><h2>Listing Plans</h2><p>Pricing is managed from the admin dashboard.</p></div></div><div className="cards">{(plans ?? []).map((plan:any)=><div className="card" key={plan.id}><div className="card-body"><span className="card-kicker">{plan.badge || "Listing"}</span><h3>{plan.name}</h3><p>₹{Number(plan.monthly_price).toLocaleString("en-IN")}/month • ₹{Number(plan.annual_price).toLocaleString("en-IN")}/year</p><div className="card-meta">{plan.features?.map((f:string)=><span className="tag" key={f}>{f}</span>)}</div></div></div>)}</div></section>
-  </div>;
-}
+const cats=['📷 Camera Studios','💃 Dance Schools','🎵 Music Schools','🌼 Event Decor','📸 Photography','💍 Wedding Services','🛕 Religious Services'];
+const businesses=[
+ {name:'Om Camera Studio',desc:'Professional photography for all your special moments.',city:'Vrindavan, UP',img:'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=700&q=80',featured:true},
+ {name:'Nataraj Dance Academy',desc:'Classical dance training in Bharatanatyam & Kathak.',city:'Mathura, UP',img:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=700&q=80',featured:true},
+ {name:'Sur Sadhana Music School',desc:'Learn Hindustani Classical, vocal and instrumental music.',city:'Delhi, India',img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=700&q=80',featured:true},
+ {name:'Krishna Wedding Films',desc:'Cinematic wedding films that tell your unique story.',city:'Vrindavan, UP',img:'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=700&q=80',featured:true},
+ {name:'Meera Boutique',desc:'Ethnic wear, sarees and custom tailoring.',city:'Jaipur, Rajasthan',img:'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=80'},
+ {name:'Radha Event Decor',desc:'Beautiful decor for weddings, festivals and special events.',city:'Mathura, UP',img:'https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=700&q=80'},
+ {name:'Govinda Caterers',desc:'Pure vegetarian catering for devotional and family events.',city:'Noida, UP',img:'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=700&q=80'},
+ {name:'Vrindavan Tours & Seva',desc:'Pilgrimage tours, temple visits and local spiritual experiences.',city:'Vrindavan, UP',img:'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=700&q=80'}
+];
+export default function BusinessesPage(){return <div className="page">
+ <div className="page-title"><div><h1>Businesses</h1><p>Discover trusted Indian community businesses and services.</p></div></div>
+ <div className="searchbar"><Search size={18}/><input placeholder="Search businesses, services, or keywords"/><span>☰</span></div>
+ <div className="chips" style={{marginTop:12}}>{cats.map((c,i)=><span className={`chip ${i===0?'active':''}`} key={c}>{c}</span>)}</div>
+ <section className="section feature-banner"><span className="badge">★ Featured Business</span><h2>Krishna Wedding Films</h2><p>Cinematic wedding storytellers capturing precious moments with devotion and artistry.</p><div className="meta-line" style={{color:'#fff',marginTop:13}}><span><MapPin size={12}/>Vrindavan, UP</span><span>🏆 20+ Years Experience</span></div><span className="hero-cta">View Profile</span></section>
+ <div className="filter-row"><div className="filter-pill">All Categories ▾</div><div className="filter-pill">All Cities ▾</div></div>
+ <section className="business-grid">{businesses.map(b=><div className="business-card" key={b.name}><div className="business-thumb" style={{backgroundImage:`url(${b.img})`}}/><div className="business-body"><h3>{b.name}</h3>{b.featured&&<span className="badge" style={{marginTop:5}}>★ Featured</span>}<p>{b.desc}</p><span className="location"><MapPin size={10}/>{b.city}</span><div className="business-actions"><a href="#"><Phone size={10}/>Call</a><a href="#">◉ WhatsApp</a></div></div></div>)}</section>
+ </div>}
