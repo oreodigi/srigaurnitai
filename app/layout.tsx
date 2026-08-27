@@ -1,24 +1,21 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Bell, BriefcaseBusiness, CalendarDays, CircleUserRound, Home, Search, Trophy } from "lucide-react";
+import { Bell, BriefcaseBusiness, CalendarHeart, CircleUserRound, Home, PlayCircle, Trophy } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Sri Gaur Nitai",
-  description: "Spiritual contests, celebrations, businesses and community opportunities.",
+  description: "Spiritual contests, event video publishing, community videos and trusted businesses.",
   applicationName: "Sri Gaur Nitai",
 };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  themeColor: "#fffaf1",
-};
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#720b32" };
 
 const nav = [
   { href: "/", label: "Home", icon: Home },
   { href: "/contests", label: "Contests", icon: Trophy },
-  { href: "/events", label: "Events", icon: CalendarDays },
+  { href: "/events", label: "Events", icon: CalendarHeart },
   { href: "/businesses", label: "Businesses", icon: BriefcaseBusiness },
   { href: "/account", label: "Account", icon: CircleUserRound },
 ];
@@ -29,24 +26,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <div className="app-shell">
           <header className="topbar">
-            <Link className="brand" href="/" aria-label="Sri Gaur Nitai home">
-              <span className="lotus-mark">♢</span>
-              <span><strong>Sri Gaur Nitai</strong><small>Serve • Share • Inspire</small></span>
-            </Link>
+            <BrandLogo />
             <div className="top-actions">
-              <button className="icon-btn" aria-label="Search"><Search size={20}/></button>
-              <button className="icon-btn notify" aria-label="Notifications"><Bell size={20}/><i /></button>
-              <Link className="avatar" href="/account" aria-label="Account">SG</Link>
+              <Link className="icon-action" href="/videos" aria-label="Public videos"><PlayCircle size={21}/></Link>
+              <Link className="icon-action" href="/account#notifications" aria-label="Notifications"><Bell size={21}/><span className="notification-dot"/></Link>
+              <Link className="avatar-action" href="/account" aria-label="My account"><CircleUserRound size={23}/></Link>
             </div>
           </header>
           <main>{children}</main>
           <nav className="bottom-nav" aria-label="Primary navigation">
-            {nav.map(({ href, label, icon: Icon }) => (
-              <Link href={href} key={href} className="nav-item">
-                <Icon size={22} strokeWidth={1.8} />
-                <span>{label}</span>
-              </Link>
-            ))}
+            {nav.map(({ href, label, icon: Icon }) => <Link href={href} key={href} className="nav-item"><Icon size={21} strokeWidth={1.8}/><span>{label}</span></Link>)}
           </nav>
         </div>
       </body>
