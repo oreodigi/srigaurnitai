@@ -5,6 +5,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import "./globals.css";
 import "./functional.css";
 import "./polish.css";
+import "./mobile-fixes.css";
 
 export const metadata: Metadata = {
   title: "Sri Gaur Nitai",
