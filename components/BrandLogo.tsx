@@ -1,12 +1,11 @@
 import Link from "next/link";
 
-const transparentLogoIcon = "/api/brand-icon";
+function Emblem({compact=false}:{compact?:boolean}){return <span className={compact?"sgn-emblem compact":"sgn-emblem"} aria-hidden="true"><span className="sgn-arch"/><span className="sgn-figures">♬</span><span className="sgn-lotus">◆</span></span>}
 
 export function BrandLogo({ compact = false }: { compact?: boolean }) {
-  const content = <><span className="brand-logo-icon"><img src={transparentLogoIcon} alt="" /></span>{!compact && <span className="brand-logo-copy"><strong>Sri Gaur Nitai</strong><small>Spirituality • Creativity • Community</small></span>}</>;
-  return <Link href="/" className={compact ? "brand-logo compact" : "brand-logo"} aria-label="Sri Gaur Nitai home">{content}</Link>;
+  return <Link href="/" className={compact ? "brand-logo compact" : "brand-logo"} aria-label="Sri Gaur Nitai home"><Emblem compact={compact}/>{!compact && <span className="brand-logo-copy"><strong>Sri Gaur Nitai</strong><small>Spirituality • Creativity • Community</small></span>}</Link>;
 }
 
 export function BrandIcon({ size = 72 }: { size?: number }) {
-  return <img src={transparentLogoIcon} alt="Sri Gaur Nitai" style={{ width: size, height: size, objectFit: "contain" }} />;
+  return <span style={{width:size,height:size,display:"inline-grid",placeItems:"center"}}><Emblem compact/></span>;
 }
