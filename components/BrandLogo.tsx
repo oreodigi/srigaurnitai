@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const transparentLogoIcon = "/api/brand-icon?v=4";
+const transparentLogoIcon = "/sgn-emblem.svg?v=1";
 
 export function BrandLogo({ compact = false }: { compact?: boolean }) {
   return <Link href="/" className={compact ? "brand-logo compact" : "brand-logo"} aria-label="Sri Gaur Nitai home">
@@ -10,5 +10,5 @@ export function BrandLogo({ compact = false }: { compact?: boolean }) {
 }
 
 export function BrandIcon({ size = 72 }: { size?: number }) {
-  return <img src={transparentLogoIcon} alt="Sri Gaur Nitai" style={{ width: size, height: "auto", maxHeight: size, objectFit: "contain", display: "block" }} />;
+  return <img src={transparentLogoIcon} alt="Sri Gaur Nitai" width={size} height={size} style={{ width: size, height: size, objectFit: "contain", display: "block" }} />;
 }
