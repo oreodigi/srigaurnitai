@@ -1,36 +1,44 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
+import { BriefcaseBusiness, CalendarHeart, Check, CreditCard, LogOut, RefreshCw, ShieldCheck, Trophy, UsersRound, Video, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-const metrics = [
-  ["Users", "profiles"],
-  ["Contests", "contests"],
-  ["Contest Submissions", "contest_submissions"],
-  ["Event Submissions", "event_submissions"],
-  ["Businesses", "businesses"],
-  ["Payments", "payments"],
-] as const;
+export default function AdminPage(){
+  const [user,setUser]=useState<any>(null);const [isAdmin,setIsAdmin]=useState(false);const [checking,setChecking]=useState(true);const [email,setEmail]=useState("");const [password,setPassword]=useState("");const [message,setMessage]=useState("");
+  const [metrics,setMetrics]=useState<Record<string,number>>({});const [contestQueue,setContestQueue]=useState<any[]>([]);const [eventQueue,setEventQueue]=useState<any[]>([]);const [businessQueue,setBusinessQueue]=useState<any[]>([]);const [videos,setVideos]=useState<any[]>([]);
 
-export default function AdminPage() {
-  const [counts, setCounts] = useState<Record<string, number>>({});
-  const [state, setState] = useState("Checking administrator access...");
+  const loadAdmin=useCallback(async(u:any)=>{
+    if(!u){setChecking(false);setIsAdmin(false);return}setChecking(true);
+    const {data:role}=await supabase.from("user_roles").select("role").eq("user_id",u.id).eq("role","admin").maybeSingle();
+    if(!role){setIsAdmin(false);setChecking(false);return}setIsAdmin(true);
+    const countTables=["profiles","contests","contest_submissions","event_submissions","businesses","payments","public_videos"] as const;
+    const counts=await Promise.all(countTables.map(async table=>{const {count}=await supabase.from(table).select("*",{count:"exact",head:true});return [table,count||0] as const}));setMetrics(Object.fromEntries(counts));
+    const [cq,eq,bq,pv]=await Promise.all([
+      supabase.from("contest_submissions").select("id,reference_code,title,status,submitted_at,profiles:user_id(full_name),contests(title)").in("status",["submitted","under_review","shortlisted"]).order("submitted_at"),
+      supabase.from("event_submissions").select("id,reference_code,title,subject_name,status,created_at,event_categories(name)").in("status",["submitted","under_review","payment_received"]).order("created_at"),
+      supabase.from("businesses").select("id,name,slug,status,city,state,created_at").in("status",["pending","draft"]).order("created_at"),
+      supabase.from("public_videos").select("id,title,content_type,status,is_featured,published_at").order("published_at",{ascending:false}).limit(12)
+    ]);setContestQueue(cq.data||[]);setEventQueue(eq.data||[]);setBusinessQueue(bq.data||[]);setVideos(pv.data||[]);setChecking(false);
+  },[]);
 
-  useEffect(() => {
-    (async () => {
-      const { data: auth } = await supabase.auth.getUser();
-      if (!auth.user) return setState("Login with an administrator account to access this dashboard.");
-      const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", auth.user.id).eq("role", "admin").maybeSingle();
-      if (!role) return setState("This account does not have administrator access.");
-      const results = await Promise.all(metrics.map(async ([label, table]) => {
-        const { count } = await supabase.from(table).select("*", { count: "exact", head: true });
-        return [label, count ?? 0] as const;
-      }));
-      setCounts(Object.fromEntries(results));
-      setState("Administrator dashboard");
-    })();
-  }, []);
+  useEffect(()=>{supabase.auth.getUser().then(({data})=>{setUser(data.user||null);loadAdmin(data.user)});const {data}=supabase.auth.onAuthStateChange((_e,s)=>{setUser(s?.user||null);loadAdmin(s?.user)});return()=>data.subscription.unsubscribe()},[loadAdmin]);
+  async function login(e:FormEvent){e.preventDefault();setMessage("Signing in…");const {error}=await supabase.auth.signInWithPassword({email,password});setMessage(error?error.message:"")}
+  async function claimInitialAdmin(){if(!user)return;setMessage("Initializing administrator access…");const {error}=await supabase.from("user_roles").insert({user_id:user.id,role:"admin"});if(error)setMessage("Admin initialization is unavailable because an administrator already exists, or this session is not eligible. "+error.message);else{setMessage("Administrator access created.");loadAdmin(user)}}
+  async function updateContest(id:string,status:string){const {error}=await supabase.from("contest_submissions").update({status,reviewed_at:new Date().toISOString(),reviewed_by:user.id}).eq("id",id);setMessage(error?error.message:"Contest submission updated.");loadAdmin(user)}
+  async function updateEvent(id:string,status:string){const {error}=await supabase.from("event_submissions").update({status,updated_at:new Date().toISOString()}).eq("id",id);setMessage(error?error.message:"Event request updated.");loadAdmin(user)}
+  async function updateBusiness(id:string,status:string){const {error}=await supabase.from("businesses").update({status,updated_at:new Date().toISOString()}).eq("id",id);setMessage(error?error.message:"Business listing updated.");loadAdmin(user)}
 
-  return <div className="page"><div className="section-head"><div><h2>Administration</h2><p>{state}</p></div><ShieldCheck/></div>{Object.keys(counts).length ? <><div className="quick-grid">{Object.entries(counts).map(([label,value])=><div className="quick-card" key={label}><strong>{value.toLocaleString("en-IN")}</strong><span>{label}</span></div>)}</div><section className="section"><div className="cards"><div className="card"><div className="card-body"><span className="card-kicker">Moderation</span><h3>Approvals & Review Queue</h3><p>Contest videos, event videos and business listings are controlled through the role-secured database workflow.</p></div></div><div className="card"><div className="card-body"><span className="card-kicker">Commercial</span><h3>Payments & Subscriptions</h3><p>Registration fees, subscriptions, contest fees and event publishing payments share one transaction model.</p></div></div><div className="card"><div className="card-body"><span className="card-kicker">Content</span><h3>CMS & Winners</h3><p>Banners, announcements, winner profiles and publishing status are ready in the backend model.</p></div></div></div></section></> : <div className="empty-state"><ShieldCheck/><h3>Protected Admin Area</h3><p>{state}</p></div>}</div>;
+  if(checking)return <div className="page"><div className="admin-loading"><RefreshCw className="spin"/><p>Checking administrator access…</p></div></div>;
+  if(!user)return <div className="page auth-page"><section className="auth-shell admin-login"><div className="auth-intro"><ShieldCheck size={40}/><h1>Administrator Login</h1><p>Secure access to moderation, businesses, payments and publishing workflows.</p></div><form onSubmit={login}><div className="field"><label>Admin email</label><input type="email" required value={email} onChange={e=>setEmail(e.target.value)}/></div><div className="field"><label>Password</label><input type="password" required value={password} onChange={e=>setPassword(e.target.value)}/></div><button className="btn btn-primary auth-main">Login to Admin</button></form>{message&&<div className="auth-message">{message}</div>}<a className="text-button" href="/account">Create/verify account first</a></section></div>;
+  if(!isAdmin)return <div className="page"><section className="admin-setup-card"><ShieldCheck size={42}/><h1>Administrator Setup</h1><p>You are signed in as <strong>{user.email||user.phone}</strong>, but this account is not currently an administrator.</p><p>If this is the first administrator for the project, you can initialize it once. After an admin exists, this operation is permanently blocked for normal users.</p><button className="btn btn-primary" onClick={claimInitialAdmin}>Initialize First Admin</button><button className="btn soft-btn" onClick={()=>supabase.auth.signOut()}><LogOut size={15}/> Sign out</button>{message&&<div className="auth-message">{message}</div>}</section></div>;
+
+  return <div className="page admin-page"><div className="admin-title"><div><span className="verified-pill"><ShieldCheck size={13}/> Administrator</span><h1>Control Center</h1><p>{user.email}</p></div><div className="admin-title-actions"><button className="btn soft-btn" onClick={()=>loadAdmin(user)}><RefreshCw size={15}/> Refresh</button><button className="btn soft-btn" onClick={()=>supabase.auth.signOut()}><LogOut size={15}/> Sign out</button></div></div>
+    <div className="admin-metrics"><div><UsersRound/><strong>{metrics.profiles||0}</strong><span>Users</span></div><div><Trophy/><strong>{metrics.contests||0}</strong><span>Contests</span></div><div><Video/><strong>{metrics.contest_submissions||0}</strong><span>Contest entries</span></div><div><CalendarHeart/><strong>{metrics.event_submissions||0}</strong><span>Event requests</span></div><div><BriefcaseBusiness/><strong>{metrics.businesses||0}</strong><span>Businesses</span></div><div><CreditCard/><strong>{metrics.payments||0}</strong><span>Payments</span></div></div>
+    <section className="admin-panel"><div className="section-head"><div><h2>Contest Moderation</h2><p>Approve, reject or shortlist submitted videos.</p></div></div>{contestQueue.length?contestQueue.map((x:any)=><div className="admin-queue-row" key={x.id}><div><strong>{x.title}</strong><span>{x.contests?.title} • {x.reference_code} • {x.status}</span></div><div className="queue-actions"><button onClick={()=>updateContest(x.id,"approved")}><Check/>Approve</button><button onClick={()=>updateContest(x.id,"shortlisted")}>Shortlist</button><button className="danger" onClick={()=>updateContest(x.id,"rejected")}><X/>Reject</button></div></div>):<div className="empty-mini">No contest items waiting for review.</div>}</section>
+    <section className="admin-panel"><div className="section-head"><div><h2>Event Publishing Queue</h2><p>Move event requests through review and scheduling.</p></div></div>{eventQueue.length?eventQueue.map((x:any)=><div className="admin-queue-row" key={x.id}><div><strong>{x.title||x.subject_name}</strong><span>{x.event_categories?.name} • {x.reference_code} • {x.status}</span></div><div className="queue-actions"><button onClick={()=>updateEvent(x.id,"approved")}><Check/>Approve</button><button onClick={()=>updateEvent(x.id,"scheduled")}>Schedule</button><button className="danger" onClick={()=>updateEvent(x.id,"rejected")}><X/>Reject</button></div></div>):<div className="empty-mini">No event items waiting for review.</div>}</section>
+    <section className="admin-panel"><div className="section-head"><div><h2>Business Approvals</h2><p>Review newly registered listings.</p></div></div>{businessQueue.length?businessQueue.map((x:any)=><div className="admin-queue-row" key={x.id}><div><strong>{x.name}</strong><span>{x.city}, {x.state} • {x.status}</span></div><div className="queue-actions"><button onClick={()=>updateBusiness(x.id,"approved")}><Check/>Approve</button><button className="danger" onClick={()=>updateBusiness(x.id,"rejected")}><X/>Reject</button></div></div>):<div className="empty-mini">No business listings waiting for approval.</div>}</section>
+    <section className="admin-panel"><div className="section-head"><div><h2>Published Videos</h2><p>Public content currently visible to all users.</p></div><a className="section-link" href="/videos">Open public feed</a></div>{videos.map((v:any)=><div className="admin-queue-row" key={v.id}><div><strong>{v.title}</strong><span>{v.content_type} • {v.status}</span></div>{v.is_featured&&<em className="status-pill shortlisted">featured</em>}</div>)}</section>
+    {message&&<div className="toast-message">{message}</div>}
+  </div>;
 }
