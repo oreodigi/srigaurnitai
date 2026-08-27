@@ -1,37 +1,16 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { CalendarHeart } from "lucide-react";
+import Link from "next/link";
+import { CalendarHeart, Video } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export default function EventSubmitPage() {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [packages, setPackages] = useState<any[]>([]);
-  const [message, setMessage] = useState("");
-  useEffect(() => {
-    Promise.all([
-      supabase.from("event_categories").select("id,name,base_price").eq("is_active", true).order("sort_order"),
-      supabase.from("event_packages").select("id,name,price_modifier").eq("is_active", true).order("sort_order"),
-    ]).then(([a,b]) => { setCategories(a.data ?? []); setPackages(b.data ?? []); });
-  }, []);
-
-  async function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const { data: auth } = await supabase.auth.getUser();
-    if (!auth.user) { setMessage("Please login before submitting an event video."); return; }
-    const fd = new FormData(e.currentTarget);
-    const { error } = await supabase.from("event_submissions").insert({
-      user_id: auth.user.id,
-      category_id: fd.get("category_id"),
-      package_id: fd.get("package_id") || null,
-      subject_name: fd.get("subject_name"),
-      requested_publish_date: fd.get("requested_publish_date") || null,
-      title: fd.get("title"),
-      message: fd.get("message"),
-      status: "submitted",
-    });
-    setMessage(error ? error.message : "Event request created. Video upload and payment will follow in the next step.");
-  }
-
-  return <div className="page"><div className="section-head"><div><h2>Submit Event Video</h2><p>Create the publishing request from your phone.</p></div></div><form className="form-card" onSubmit={submit}><CalendarHeart size={30}/><div className="field"><label>Event category</label><select name="category_id" required><option value="">Select</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name} — ₹{Number(c.base_price).toLocaleString("en-IN")}</option>)}</select></div><div className="field"><label>Publishing package</label><select name="package_id"><option value="">Standard/default</option>{packages.map(p=><option key={p.id} value={p.id}>{p.name} (+₹{Number(p.price_modifier).toLocaleString("en-IN")})</option>)}</select></div><div className="field"><label>Person / family / business name</label><input name="subject_name" required/></div><div className="field"><label>Requested publish date</label><input name="requested_publish_date" type="date"/></div><div className="field"><label>Video title</label><input name="title"/></div><div className="field"><label>Message</label><textarea name="message" rows={4}/></div><button className="btn btn-primary" type="submit">Create Publishing Request</button>{message && <p style={{fontSize:12,color:"var(--muted)"}}>{message}</p>}</form></div>;
+  const [categories,setCategories]=useState<any[]>([]); const [packages,setPackages]=useState<any[]>([]); const [message,setMessage]=useState(""); const [busy,setBusy]=useState(false); const [categoryId,setCategoryId]=useState(""); const [packageId,setPackageId]=useState("");
+  useEffect(()=>{Promise.all([
+    supabase.from("event_categories").select("id,name,slug,base_price").eq("is_active",true).order("sort_order"),
+    supabase.from("event_packages").select("id,name,price_modifier").eq("is_active",true).order("sort_order")
+  ]).then(([a,b])=>{const cs=a.data||[];const ps=b.data||[];setCategories(cs);setPackages(ps);const q=new URLSearchParams(window.location.search);const cat=q.get("category");const pack=q.get("package");if(cat){const found=cs.find((x:any)=>x.slug===cat);if(found)setCategoryId(found.id)}if(pack&&ps.some((x:any)=>x.id===pack))setPackageId(pack)})},[]);
+  async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setMessage("");const {data:auth}=await supabase.auth.getUser();if(!auth.user){setBusy(false);setMessage("Please login or register before submitting an event video.");return}const fd=new FormData(e.currentTarget);const {data,error}=await supabase.from("event_submissions").insert({user_id:auth.user.id,category_id:fd.get("category_id"),package_id:fd.get("package_id")||null,subject_name:fd.get("subject_name"),event_details:fd.get("event_details")||null,requested_publish_date:fd.get("requested_publish_date")||null,title:fd.get("title"),message:fd.get("message"),video_url:fd.get("video_url")||null,status:"submitted"}).select("reference_code").single();setBusy(false);if(error)setMessage(error.message);else{setMessage(`Publishing request created. Reference ID: ${data.reference_code}. Track it from My Account.`);(e.currentTarget as HTMLFormElement).reset()}}
+  return <div className="page"><div className="section-head"><div><h2>Submit Event Video</h2><p>Create and track your publishing request from your phone.</p></div><Link className="section-link" href="/account#events">My Requests</Link></div><form className="form-card" onSubmit={submit}><CalendarHeart size={30}/><div className="field"><label>Event category</label><select name="category_id" required value={categoryId} onChange={e=>setCategoryId(e.target.value)}><option value="">Select</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name} — base ₹{Number(c.base_price).toLocaleString("en-IN")}</option>)}</select></div><div className="field"><label>Publishing package</label><select name="package_id" value={packageId} onChange={e=>setPackageId(e.target.value)}><option value="">Standard/default</option>{packages.map(p=><option key={p.id} value={p.id}>{p.name} (+₹{Number(p.price_modifier).toLocaleString("en-IN")})</option>)}</select></div><div className="field"><label>Person / family / business name</label><input name="subject_name" required/></div><div className="field"><label>Event details</label><textarea name="event_details" rows={3} placeholder="Venue, occasion details, special instructions…"/></div><div className="field"><label>Requested publish date</label><input name="requested_publish_date" type="date"/></div><div className="field"><label>Video title</label><input name="title" required/></div><div className="field"><label>Message / caption</label><textarea name="message" rows={4}/></div><div className="field"><label><Video size={14}/> Video URL / temporary upload URL</label><input name="video_url" type="url" placeholder="https://..."/><small>Direct Mux file upload will become available when the Mux token secret is added server-side. URL-based submission works now.</small></div><button className="btn btn-primary" disabled={busy}>{busy?"Submitting…":"Create Publishing Request"}</button>{message&&<div className="auth-message">{message}</div>}</form></div>;
 }
