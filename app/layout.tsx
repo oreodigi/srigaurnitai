@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Bell, BriefcaseBusiness, CalendarHeart, CircleUserRound, Home, PlayCircle, Trophy } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import "./globals.css";
+import "./functional.css";
 
 export const metadata: Metadata = {
   title: "Sri Gaur Nitai",
