@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, ExternalLink, Globe2, Instagram, Mail, MapPin, MessageCircle, Phone, Play, Share2, ShieldCheck, Star, Youtube } from "lucide-react";
+import { ArrowLeft, Clock, ExternalLink, Globe2, Instagram, Mail, MapPin, MessageCircle, Phone, Play, ShieldCheck, Star, Youtube } from "lucide-react";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { BusinessInquiryForm } from "@/components/BusinessInquiryForm";
+import { ShareProfileButton } from "@/components/ShareProfileButton";
 
 const fallback="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=85";
 
@@ -52,13 +53,13 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
       <aside>
         <section className="detail-panel"><h2>Business Information</h2>{address && <div className="info-row"><MapPin size={17}/><div><strong>Address</strong><span>{address}</span></div></div>}{business.phone && <div className="info-row"><Phone size={17}/><div><strong>Phone</strong><a href={`tel:${business.phone}`}>{business.phone}</a></div></div>}{business.email && <div className="info-row"><Mail size={17}/><div><strong>Email</strong><a href={`mailto:${business.email}`}>{business.email}</a></div></div>}{business.website && <div className="info-row"><Globe2 size={17}/><div><strong>Website</strong><a href={business.website} target="_blank" rel="noreferrer">Visit website <ExternalLink size={12}/></a></div></div>}</section>
         <section className="detail-panel section"><h2>Opening Hours</h2><div className="info-row"><Clock size={17}/><div>{Object.entries(business.opening_hours || {"Monday - Saturday":"9:00 AM - 8:00 PM","Sunday":"10:00 AM - 6:00 PM"}).map(([day,hours])=><span key={day}><strong>{day}</strong>: {String(hours)}</span>)}</div></div></section>
-        <section className="detail-panel section"><h2>Follow Us</h2><div className="social-row">{socials.instagram&&<a className="social-pill" href={String(socials.instagram)} target="_blank"><Instagram size={15}/>Instagram</a>}{socials.youtube&&<a className="social-pill" href={String(socials.youtube)} target="_blank"><Youtube size={15}/>YouTube</a>}{socials.facebook&&<a className="social-pill" href={String(socials.facebook)} target="_blank">Facebook</a>}{!Object.keys(socials).length&&<span className="form-note">Social handles can be managed from the business account.</span>}</div></section>
+        <section className="detail-panel section"><h2>Follow Us</h2><div className="social-row">{socials.instagram&&<a className="social-pill" href={String(socials.instagram)} target="_blank" rel="noreferrer"><Instagram size={15}/>Instagram</a>}{socials.youtube&&<a className="social-pill" href={String(socials.youtube)} target="_blank" rel="noreferrer"><Youtube size={15}/>YouTube</a>}{socials.facebook&&<a className="social-pill" href={String(socials.facebook)} target="_blank" rel="noreferrer">Facebook</a>}{!Object.keys(socials).length&&<span className="form-note">Social handles can be managed from the business account.</span>}</div></section>
         {business.youtube_url&&<section className="detail-panel section"><h2>Featured Video</h2><a className="yt-card" href={business.youtube_url} target="_blank" rel="noreferrer" style={{backgroundImage:`url(${photos[1]||photo})`}}><span><Play size={16} style={{verticalAlign:"middle"}}/> Watch on YouTube</span></a></section>}
         <section className="detail-panel section"><h2>Payment Options</h2><div className="payment-row"><span className="payment-pill">UPI</span><span className="payment-pill">RuPay</span><span className="payment-pill">Visa</span><span className="payment-pill">Mastercard</span><span className="payment-pill">Bank Transfer</span><span className="payment-pill">Cash</span></div><p>Payments are made directly to the business. Sri Gaur Nitai listing does not guarantee third-party services.</p></section>
       </aside>
     </div>
 
     <section className="detail-panel section" id="inquiry"><h2>Send an Inquiry</h2><p>Share your requirement and the business can follow up directly.</p><BusinessInquiryForm businessId={business.id} businessName={business.name}/></section>
-    <section className="section pretty-panel" style={{textAlign:"center",background:"linear-gradient(110deg,#fff6e7,#fff)"}}><h2 style={{justifyContent:"center"}}>Ready to connect with {business.name}?</h2><div style={{display:"flex",justifyContent:"center",gap:8,flexWrap:"wrap"}}>{whatsapp&&<a className="btn btn-primary" href={whatsapp} target="_blank"><MessageCircle size={15}/> WhatsApp Now</a>}<a className="btn btn-gold" href="#inquiry">Send Inquiry</a><button className="btn btn-outline" type="button"><Share2 size={15}/> Share Profile</button></div></section>
+    <section className="section pretty-panel" style={{textAlign:"center",background:"linear-gradient(110deg,#fff6e7,#fff)"}}><h2 style={{justifyContent:"center"}}>Ready to connect with {business.name}?</h2><div style={{display:"flex",justifyContent:"center",gap:8,flexWrap:"wrap"}}>{whatsapp&&<a className="btn btn-primary" href={whatsapp} target="_blank" rel="noreferrer"><MessageCircle size={15}/> WhatsApp Now</a>}<a className="btn btn-gold" href="#inquiry">Send Inquiry</a><ShareProfileButton title={business.name}/></div></section>
   </div>;
 }
