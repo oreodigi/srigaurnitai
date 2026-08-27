@@ -1,0 +1,7 @@
+"use client";
+import Link from "next/link";
+import { Bell, BriefcaseBusiness, CalendarHeart, CircleUserRound, Home, PlayCircle, Trophy } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/BrandLogo";
+const nav=[{href:"/",label:"Home",icon:Home},{href:"/contests",label:"Contests",icon:Trophy},{href:"/events",label:"Events",icon:CalendarHeart},{href:"/businesses",label:"Businesses",icon:BriefcaseBusiness},{href:"/account",label:"Account",icon:CircleUserRound}];
+export function AppChrome({children}:{children:React.ReactNode}){const path=usePathname();if(path.startsWith("/admin"))return <>{children}</>;return <div className="app-shell"><header className="topbar"><BrandLogo/><div className="top-actions"><Link className="icon-action" href="/videos" aria-label="Public videos"><PlayCircle size={21}/></Link><Link className="icon-action" href="/account#notifications" aria-label="Notifications"><Bell size={21}/><span className="notification-dot"/></Link><Link className="avatar-action" href="/account" aria-label="My account"><CircleUserRound size={23}/></Link></div></header><main>{children}</main><nav className="bottom-nav" aria-label="Primary navigation">{nav.map(({href,label,icon:Icon})=><Link href={href} key={href} className="nav-item"><Icon size={21} strokeWidth={1.8}/><span>{label}</span></Link>)}</nav></div>}
