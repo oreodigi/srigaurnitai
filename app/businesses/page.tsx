@@ -1,21 +1,29 @@
-import { MapPin, Phone, Search } from "lucide-react";
+import Link from "next/link";
+import { Camera, ChevronRight, MapPin, Music2, Search, Star, Store, UsersRound } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
-const cats=['📷 Camera Studios','💃 Dance Schools','🎵 Music Schools','🌼 Event Decor','📸 Photography','💍 Wedding Services','🛕 Religious Services'];
-const businesses=[
- {name:'Om Camera Studio',desc:'Professional photography for all your special moments.',city:'Vrindavan, UP',img:'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=700&q=80',featured:true},
- {name:'Nataraj Dance Academy',desc:'Classical dance training in Bharatanatyam & Kathak.',city:'Mathura, UP',img:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=700&q=80',featured:true},
- {name:'Sur Sadhana Music School',desc:'Learn Hindustani Classical, vocal and instrumental music.',city:'Delhi, India',img:'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=700&q=80',featured:true},
- {name:'Krishna Wedding Films',desc:'Cinematic wedding films that tell your unique story.',city:'Vrindavan, UP',img:'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=700&q=80',featured:true},
- {name:'Meera Boutique',desc:'Ethnic wear, sarees and custom tailoring.',city:'Jaipur, Rajasthan',img:'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=80'},
- {name:'Radha Event Decor',desc:'Beautiful decor for weddings, festivals and special events.',city:'Mathura, UP',img:'https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=700&q=80'},
- {name:'Govinda Caterers',desc:'Pure vegetarian catering for devotional and family events.',city:'Noida, UP',img:'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=700&q=80'},
- {name:'Vrindavan Tours & Seva',desc:'Pilgrimage tours, temple visits and local spiritual experiences.',city:'Vrindavan, UP',img:'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=700&q=80'}
-];
-export default function BusinessesPage(){return <div className="page">
- <div className="page-title"><div><h1>Businesses</h1><p>Discover trusted Indian community businesses and services.</p></div></div>
- <div className="searchbar"><Search size={18}/><input placeholder="Search businesses, services, or keywords"/><span>☰</span></div>
- <div className="chips" style={{marginTop:12}}>{cats.map((c,i)=><span className={`chip ${i===0?'active':''}`} key={c}>{c}</span>)}</div>
- <section className="section feature-banner"><span className="badge">★ Featured Business</span><h2>Krishna Wedding Films</h2><p>Cinematic wedding storytellers capturing precious moments with devotion and artistry.</p><div className="meta-line" style={{color:'#fff',marginTop:13}}><span><MapPin size={12}/>Vrindavan, UP</span><span>🏆 20+ Years Experience</span></div><span className="hero-cta">View Profile</span></section>
- <div className="filter-row"><div className="filter-pill">All Categories ▾</div><div className="filter-pill">All Cities ▾</div></div>
- <section className="business-grid">{businesses.map(b=><div className="business-card" key={b.name}><div className="business-thumb" style={{backgroundImage:`url(${b.img})`}}/><div className="business-body"><h3>{b.name}</h3>{b.featured&&<span className="badge" style={{marginTop:5}}>★ Featured</span>}<p>{b.desc}</p><span className="location"><MapPin size={10}/>{b.city}</span><div className="business-actions"><a href="#"><Phone size={10}/>Call</a><a href="#">◉ WhatsApp</a></div></div></div>)}</section>
- </div>}
+const iconMap: Record<string, any> = { Photography: Camera, Education: UsersRound, "Event Management": Store };
+
+export default async function BusinessesPage({ searchParams }: { searchParams: Promise<{ q?: string; category?: string; city?: string }> }) {
+  const params = await searchParams;
+  const [{ data: categories }, { data: cityRows }] = await Promise.all([
+    supabase.from("business_categories").select("id,name,slug").eq("is_active",true).order("sort_order"),
+    supabase.from("businesses").select("city").eq("status","approved").not("city","is",null)
+  ]);
+  let query = supabase.from("businesses").select("id,name,slug,description,city,state,services,is_featured,photos,phone,whatsapp,business_categories(name,slug)").eq("status","approved").order("is_featured",{ascending:false}).order("name");
+  if (params.q) query = query.or(`name.ilike.%${params.q}%,description.ilike.%${params.q}%`);
+  if (params.city) query = query.eq("city",params.city);
+  const { data: rows } = await query;
+  const businesses = (rows || []).filter((b:any)=>!params.category || b.business_categories?.slug===params.category);
+  const cities = Array.from(new Set((cityRows||[]).map((r:any)=>r.city).filter(Boolean))).sort();
+  const featured = businesses.find((b:any)=>b.is_featured) || businesses[0];
+
+  return <div className="page directory-page">
+    <div className="page-title-row"><div><h1>Businesses</h1><p>Discover trusted community businesses and professional services.</p></div><Link className="btn btn-primary" href="/businesses/register">List Business</Link></div>
+    <form className="directory-search" action="/businesses" method="get"><Search size={19}/><input name="q" defaultValue={params.q||""} placeholder="Search businesses, services or keywords"/><button type="submit">Search</button></form>
+    <div className="category-row business-category-row"><Link className={!params.category?"category-chip active":"category-chip"} href="/businesses">All</Link>{(categories||[]).map((c:any)=>{const Icon=iconMap[c.name]||Music2;return <Link key={c.id} className={params.category===c.slug?"category-chip active":"category-chip"} href={`/businesses?category=${c.slug}${params.city?`&city=${encodeURIComponent(params.city)}`:""}`}><Icon size={15}/>{c.name}</Link>})}</div>
+    <div className="directory-filters"><form action="/businesses" method="get"><input type="hidden" name="q" value={params.q||""}/><input type="hidden" name="category" value={params.category||""}/><select name="city" defaultValue={params.city||""}><option value="">All Cities</option>{cities.map(c=><option value={c} key={c}>{c}</option>)}</select><button type="submit">Apply</button></form><span>{businesses.length} businesses</span></div>
+    {featured && <Link className="featured-business-hero" href={`/businesses/${featured.slug}`} style={{backgroundImage:`linear-gradient(90deg,rgba(71,4,32,.96),rgba(71,4,32,.55),rgba(71,4,32,.08)),url(${featured.photos?.[0]||"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80"})`}}><div><span className="gold-badge"><Star size={13} fill="currentColor"/> Featured Business</span><h2>{featured.name}</h2><p>{featured.description}</p><span className="hero-location"><MapPin size={15}/>{featured.city}, {featured.state}</span><span className="btn gold-btn">View Profile <ChevronRight size={16}/></span></div></Link>}
+    <section className="section"><div className="section-head"><div><h2>All Businesses</h2><p>Tap a listing to view complete business details.</p></div></div><div className="business-grid">{businesses.map((b:any)=><Link className="business-card" href={`/businesses/${b.slug}`} key={b.id}><div className="business-thumb" style={{backgroundImage:`url(${b.photos?.[0]||"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=80"})`}}>{b.is_featured&&<span>Featured</span>}</div><div className="business-card-copy"><h3>{b.name}</h3><p>{b.business_categories?.name}</p><div className="business-rating"><Star size={13} fill="currentColor"/> 4.8</div><span className="business-location"><MapPin size={13}/>{b.city}, {b.state}</span><div className="service-mini">{(b.services||[]).slice(0,2).map((s:string)=><em key={s}>{s}</em>)}</div></div></Link>)}</div>{!businesses.length&&<div className="empty-state"><Store/><h3>No businesses found</h3><p>Try another category, city or keyword.</p></div>}</section>
+  </div>;
+}
