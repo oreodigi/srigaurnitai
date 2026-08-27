@@ -4,6 +4,7 @@ import { Bell, BriefcaseBusiness, CalendarHeart, CircleUserRound, Home, PlayCirc
 import { BrandLogo } from "@/components/BrandLogo";
 import "./globals.css";
 import "./functional.css";
+import "./polish.css";
 
 export const metadata: Metadata = {
   title: "Sri Gaur Nitai",
