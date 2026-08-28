@@ -15,6 +15,7 @@ import "./admin/support/support-admin.css";
 import "./admin/enquiries/enquiries-admin.css";
 import "./admin/admin-ux-overrides.css";
 import "./admin/seo/seo-admin.css";
+import "./admin/admin-experience-v2.css";
 import "./ui-hotfixes.css";
 import "./mobile-header-fix.css";
 
