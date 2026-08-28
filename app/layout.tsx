@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AppChrome } from "@/components/AppChrome";
+import { SiteUIProvider } from "@/components/SiteUI";
 import { supabase } from "@/lib/supabase";
 import "./globals.css";
 import "./functional.css";
@@ -23,27 +24,10 @@ export async function generateMetadata():Promise<Metadata>{
  const title=s?.default_title||"Sri Gaur Nitai";
  const description=s?.default_description||"Spiritual contests, event video publishing, community videos and trusted businesses.";
  const image=s?.default_og_image_url||undefined;
- return {
-  metadataBase:new URL(base),
-  applicationName:s?.site_name||"Sri Gaur Nitai",
-  title:{default:title,template:s?.title_template||"%s | Sri Gaur Nitai"},
-  description,
-  keywords:s?.default_keywords||undefined,
-  alternates:{canonical:base},
-  robots:{index:s?.robots_index!==false,follow:s?.robots_follow!==false},
-  verification:s?.google_site_verification?{google:s.google_site_verification}:undefined,
-  openGraph:{type:"website",siteName:s?.site_name||"Sri Gaur Nitai",title,description,url:base,images:image?[{url:image}]:undefined},
-  twitter:{card:"summary_large_image",title,description,images:image?[image]:undefined,creator:s?.twitter_handle||undefined}
- };
+ return {metadataBase:new URL(base),applicationName:s?.site_name||"Sri Gaur Nitai",title:{default:title,template:s?.title_template||"%s | Sri Gaur Nitai"},description,keywords:s?.default_keywords||undefined,alternates:{canonical:base},robots:{index:s?.robots_index!==false,follow:s?.robots_follow!==false},verification:s?.google_site_verification?{google:s.google_site_verification}:undefined,openGraph:{type:"website",siteName:s?.site_name||"Sri Gaur Nitai",title,description,url:base,images:image?[{url:image}]:undefined},twitter:{card:"summary_large_image",title,description,images:image?[image]:undefined,creator:s?.twitter_handle||undefined}};
 }
-
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#720b32" };
-
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
- const {data:s}=await supabase.from("site_seo_settings").select("organization_schema").limit(1).maybeSingle();
- let schema:any=null;
- const raw=s?.organization_schema;
- if(raw&&typeof raw==="object"&&Object.keys(raw).length)schema=raw;
- if(typeof raw==="string"){try{const parsed=JSON.parse(raw);if(parsed&&typeof parsed==="object")schema=parsed}catch{}}
- return <html lang="en"><body>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<AppChrome>{children}</AppChrome></body></html>;
+ const {data:s}=await supabase.from("site_seo_settings").select("organization_schema").limit(1).maybeSingle();let schema:any=null;const raw=s?.organization_schema;if(raw&&typeof raw==="object"&&Object.keys(raw).length)schema=raw;if(typeof raw==="string"){try{const parsed=JSON.parse(raw);if(parsed&&typeof parsed==="object")schema=parsed}catch{}}
+ return <html lang="en"><body>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<SiteUIProvider><AppChrome>{children}</AppChrome></SiteUIProvider></body></html>;
 }
