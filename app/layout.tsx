@@ -7,6 +7,7 @@ import "./mobile-fixes.css";
 import "./desktop.css";
 import "./support/support.css";
 import "./admin/admin.css";
+import "./admin/identity-admin.css";
 import "./admin/support/support-admin.css";
 import "./admin/enquiries/enquiries-admin.css";
 
