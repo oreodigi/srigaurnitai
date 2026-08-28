@@ -1,8 +1,8 @@
 import "./admin-master.css";
 import AdminMasterConsole from "./AdminMasterConsole";
 import AdminSeoEnhancer from "./AdminSeoEnhancer";
-import AdminSidebarModules from "./AdminSidebarModules";
+import AdminExperienceEnhancer from "./AdminExperienceEnhancer";
 
 export default function AdminPage(){
-  return <><AdminMasterConsole/><AdminSeoEnhancer/><AdminSidebarModules/></>;
+  return <><AdminMasterConsole/><AdminSeoEnhancer/><AdminExperienceEnhancer/></>;
 }
