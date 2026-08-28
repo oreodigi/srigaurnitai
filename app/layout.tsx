@@ -5,7 +5,9 @@ import "./functional.css";
 import "./polish.css";
 import "./mobile-fixes.css";
 import "./desktop.css";
+import "./support/support.css";
 import "./admin/admin.css";
+import "./admin/support/support-admin.css";
 
 export const metadata: Metadata = {
   title: "Sri Gaur Nitai",
