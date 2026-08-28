@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { BarChart3, BookOpen, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Megaphone, SearchCheck, Settings, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards } from "lucide-react";
+import { BarChart3, BookOpen, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Megaphone, SearchCheck, Settings, Share2, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards } from "lucide-react";
 
 const groups = [
   {label:"Content & Campaigns", icon:Megaphone, items:[
     ["Events & Requests","Events & Requests",CalendarHeart],
   ], links:[
-    ["Contests","/admin/manage/contests",Trophy],["Contest Categories","/admin/manage/contest-categories",Tags],["Campaigns","/admin/manage/campaigns",Megaphone],["Review Contest Submissions","/admin/reviews/contests",Video],["Event Services","/admin/manage/event-categories",Tags],["Publishing Packages","/admin/manage/publishing-packages",WalletCards],["Review Event Submissions","/admin/reviews/events",CalendarHeart],
+    ["Contests","/admin/manage/contests",Trophy],["Contest Categories","/admin/manage/contest-categories",Tags],["Campaigns","/admin/manage/campaigns",Megaphone],["Review Contest Submissions","/admin/reviews/contests",Video],["Event Services","/admin/manage/event-categories",Tags],["Publishing Packages","/admin/manage/publishing-packages",WalletCards],["Review Event Submissions","/admin/reviews/events",CalendarHeart],["Social Publishing Hub","/admin/social",Share2],
   ]},
   {label:"Businesses & Commerce", icon:BriefcaseBusiness, items:[["Payments","Payments",CreditCard]], links:[
     ["Business Directory","/admin/manage/businesses",BriefcaseBusiness],["Review Business Listings","/admin/reviews/businesses",ShieldCheck],["Business Categories","/admin/manage/business-categories",Tags],["Business Plans","/admin/manage/business-plans",CreditCard],["Enquiries","/admin/enquiries",FileText],
