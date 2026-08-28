@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowInsets;
+import android.webkit.WebView;
 import android.widget.*;
 import java.util.ArrayList;
 import java.util.List;
