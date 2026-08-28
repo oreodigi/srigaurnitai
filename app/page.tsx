@@ -15,7 +15,7 @@ export default async function HomePage(){
   supabase.from("campaigns").select("title,subtitle,description,cta_label,cta_url,banner_url,theme_start,theme_end,badge,sort_order").eq("is_active",true).eq("show_on_homepage",true).order("sort_order"),
   supabase.from("site_ui_settings").select("show_home_hero,show_home_services,show_home_memories,show_home_contests,show_home_businesses,show_home_videos,show_home_winners").limit(1).maybeSingle()
  ]);
- const show=(k:string)=>ui?.[k]!==false;
+ const settings:any=ui||{}; const show=(k:string)=>settings[k]!==false;
  return <div className="page">
  {show("show_home_hero")&&<HomeHero slides={(campaigns||[]) as any[]}/>} 
  {show("show_home_services")&&<><section className="section"><div className="section-head"><div><h2>🌼 Free Services</h2></div><Link className="section-link" href="/contests">See all</Link></div><div className="service-panel"><div className="service-title"><strong>Spiritual Youth Services</strong></div><div className="service-rail">{youth.map(([icon,name,slug])=><Link className="service-card" href={`/contests?category=${slug}`} key={name}><div className="art">{icon}</div><strong>{name}</strong></Link>)}</div></div></section><section className="section"><div className="service-panel kids"><div className="service-title"><strong>🧒 Spiritual Kids Services</strong><Link className="section-link" href="/contests?category=kids-content">See all</Link></div><div className="service-rail">{kids.map(([icon,name,slug])=><Link className="service-card" href={`/contests?category=${slug}`} key={name}><div className="art">{icon}</div><strong>{name}</strong></Link>)}</div></div></section></>}
