@@ -1,0 +1,69 @@
+/* Mobile/tablet header isolation. Desktop navigation must never leak into phone layout. */
+@media (max-width:1023px){
+  .topbar{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    min-height:76px!important;
+    height:auto!important;
+    padding:10px 14px!important;
+  }
+  .desktop-nav{display:none!important;visibility:hidden!important;pointer-events:none!important}
+  .topbar .brand-logo{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    max-width:calc(100% - 128px)!important;
+    overflow:hidden!important;
+  }
+  .topbar .brand-logo-icon{
+    flex:0 0 62px!important;
+    width:62px!important;
+    height:52px!important;
+  }
+  .topbar .brand-logo-icon img{
+    width:100%!important;
+    height:100%!important;
+    max-height:52px!important;
+    object-fit:contain!important;
+  }
+  .topbar .brand-logo-copy{
+    min-width:0!important;
+    overflow:hidden!important;
+  }
+  .topbar .brand-logo-copy strong{
+    font-size:20px!important;
+    line-height:1.05!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .topbar .brand-logo-copy small{
+    font-size:7px!important;
+    line-height:1.15!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  .topbar .top-actions{
+    flex:0 0 auto!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:2px!important;
+    margin-left:auto!important;
+  }
+  .topbar .icon-action,.topbar .avatar-action{
+    flex:0 0 36px!important;
+    width:36px!important;
+    height:36px!important;
+  }
+}
+@media (max-width:430px){
+  .topbar{padding-left:10px!important;padding-right:10px!important;gap:6px!important}
+  .topbar .brand-logo{max-width:calc(100% - 116px)!important;gap:7px!important}
+  .topbar .brand-logo-icon{flex-basis:54px!important;width:54px!important;height:48px!important}
+  .topbar .brand-logo-icon img{max-height:48px!important}
+  .topbar .brand-logo-copy strong{font-size:18px!important}
+  .topbar .brand-logo-copy small{display:none!important}
+  .topbar .icon-action,.topbar .avatar-action{flex-basis:34px!important;width:34px!important;height:34px!important}
+}
