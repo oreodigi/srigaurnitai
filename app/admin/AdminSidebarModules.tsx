@@ -15,7 +15,7 @@ const modules = [
 export default function AdminSidebarModules(){
   const [target,setTarget]=useState<HTMLElement|null>(null);
   useEffect(()=>{
-    const find=()=>setTarget(document.querySelector(".ma-side nav"));
+    const find=()=>setTarget(document.querySelector<HTMLElement>(".ma-side nav"));
     find();
     const id=window.setInterval(find,250);
     return()=>window.clearInterval(id);
