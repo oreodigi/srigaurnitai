@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { BarChart3, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Menu, SearchCheck, Settings, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards, X } from "lucide-react";
+import { BarChart3, BookOpen, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Menu, SearchCheck, Settings, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards, X } from "lucide-react";
 import { BrandIcon } from "@/components/BrandLogo";
 
 const groups=[
@@ -17,7 +17,7 @@ const groups=[
   ["Site Users","/admin/users",UsersRound],["Staff & Roles","/admin/staff",ShieldCheck],["Support Desk","/admin/support",Headphones]
  ]},
  {label:"Content Tools",icon:Library,items:[
-  ["CMS & Banners","/admin?open=CMS%20%26%20Banners",FileText],["Media Library","/admin/media",Library],["Pages & Policies","/admin/pages",FileText]
+  ["Blog & Daily Quotes","/admin/blog",BookOpen],["CMS & Banners","/admin?open=CMS%20%26%20Banners",FileText],["Media Library","/admin/media",Library],["Pages & Policies","/admin/pages",FileText]
  ]},
  {label:"Settings",icon:Settings,items:[
   ["Settings Home","/admin/settings",Settings],["Website UI & Theme","/admin/ui",SlidersHorizontal],["SEO & Social","/admin/seo",SearchCheck],["Integrations","/admin/integrations",Sparkles],["Advanced Data","/admin/advanced",BarChart3]
@@ -27,7 +27,7 @@ const groups=[
 export default function AdminPersistentShell({children}:{children:React.ReactNode}){
  const pathname=usePathname();
  const [drawer,setDrawer]=useState(false);
- const [open,setOpen]=useState<Record<string,boolean>>({"Content & Campaigns":true,"Businesses & Commerce":true,"Community & Operations":true,"Settings":true});
+ const [open,setOpen]=useState<Record<string,boolean>>({"Content & Campaigns":true,"Businesses & Commerce":true,"Community & Operations":true,"Content Tools":true,"Settings":true});
  if(pathname==="/admin") return <>{children}</>;
  return <div className="admin-global-shell">
   {drawer&&<button className="admin-global-backdrop" aria-label="Close navigation" onClick={()=>setDrawer(false)}/>} 
