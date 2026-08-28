@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, BarChart3, FileText, Library, Plug, SearchCheck, Settings, SlidersHorizontal, Sparkles } from "lucide-react";
 
 const cards=[
- {title:"Website UI & Theme",desc:"Logo variants, colors, typography, header, footer, mobile layout and module visibility.",href:"/admin/ui-settings",icon:SlidersHorizontal},
+ {title:"Website UI & Theme",desc:"Logo variants, colors, typography, header, footer, mobile layout and module visibility.",href:"/admin/ui",icon:SlidersHorizontal},
  {title:"SEO & Social",desc:"Global SEO defaults, social metadata, indexing, sitemaps and content SEO.",href:"/admin/seo",icon:SearchCheck},
  {title:"Integrations",desc:"Razorpay, Google Maps, Mux and other external services.",href:"/admin/integrations",icon:Plug},
  {title:"Pages & Policies",desc:"Terms, privacy, refund policy, contest policies and custom pages.",href:"/admin/pages",icon:FileText},
