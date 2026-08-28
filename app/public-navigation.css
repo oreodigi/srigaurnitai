@@ -1,0 +1,50 @@
+/* Complete public navigation */
+.public-mobile-menu-button,.public-menu-backdrop,.public-mobile-drawer{display:none}
+@media(min-width:1024px){
+ .topbar{gap:14px}
+ .topbar .brand-logo{flex:0 0 auto}
+ .public-desktop-nav{flex:1 1 auto;display:flex!important;align-items:center;justify-content:center;gap:2px;min-width:0;overflow:visible}
+ .public-desktop-nav a{display:inline-flex;align-items:center;gap:5px;padding:8px 8px;border-radius:10px;white-space:nowrap;font-size:11px;font-weight:750;color:#5f4d55;transition:.18s}
+ .public-desktop-nav a:hover{background:#f8edf1;color:#790b38}
+ .public-desktop-nav a.active{background:#78103a;color:#fff}
+ .desktop-utility-video{display:none!important}
+}
+@media(min-width:1024px) and (max-width:1199px){
+ .public-desktop-nav a{padding:8px 5px;font-size:9px;gap:3px}
+ .public-desktop-nav a svg{width:13px;height:13px}
+ .topbar .brand-logo-copy small{display:none}
+}
+@media(max-width:1023px){
+ .public-mobile-menu-button{display:grid!important;place-items:center;flex:0 0 36px;width:36px;height:36px;border:0;border-radius:50%;background:#f6edf1;color:#76103a;cursor:pointer}
+ .public-menu-backdrop{display:block;position:fixed;inset:0;border:0;background:rgba(20,10,15,.55);backdrop-filter:blur(2px);z-index:9998}
+ .public-mobile-drawer{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:min(88vw,370px);background:#fffaf7;z-index:9999;box-shadow:22px 0 50px rgba(30,10,18,.22);overflow:auto;animation:publicDrawerIn .2s ease-out}
+ .public-drawer-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #eadfe3;background:rgba(255,250,247,.96);backdrop-filter:blur(12px)}
+ .public-drawer-head .brand-logo{max-width:250px}
+ .public-drawer-head .brand-logo-icon{width:52px!important;height:46px!important;flex-basis:52px!important}
+ .public-drawer-head .brand-logo-copy strong{font-size:17px!important}
+ .public-drawer-head .brand-logo-copy small{font-size:7px!important;display:block!important}
+ .public-drawer-head>button{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border:1px solid #e9dde2;border-radius:12px;background:#fff;color:#74103a}
+ .public-drawer-intro{padding:20px 18px 14px;background:linear-gradient(135deg,#6e0b35,#941249);color:#fff}
+ .public-drawer-intro small,.public-drawer-intro strong,.public-drawer-intro span{display:block}
+ .public-drawer-intro small{font-size:8px;letter-spacing:.16em;font-weight:900;color:#ffd484}
+ .public-drawer-intro strong{margin-top:6px;font-size:22px}
+ .public-drawer-intro span{margin-top:5px;font-size:10px;line-height:1.5;color:#f3dfe7}
+ .public-mobile-drawer nav{display:grid;gap:2px;padding:12px 12px 26px}
+ .public-mobile-drawer nav section{padding:8px 0 10px;border-bottom:1px solid #eee3e7}
+ .public-mobile-drawer nav section:last-child{border-bottom:0}
+ .public-mobile-drawer nav section>b{display:block;padding:0 8px 7px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#9a7f89}
+ .public-mobile-drawer nav a{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center;padding:9px 8px;border-radius:13px;color:#291b21}
+ .public-mobile-drawer nav a:hover,.public-mobile-drawer nav a.active{background:#f8eaf0;color:#711039}
+ .public-mobile-drawer nav a>span{width:40px;height:40px;border-radius:12px;background:#f5e9ee;color:#7b103c;display:grid;place-items:center}
+ .public-mobile-drawer nav a.active>span{background:#77103a;color:#fff}
+ .public-mobile-drawer nav a strong,.public-mobile-drawer nav a small{display:block}
+ .public-mobile-drawer nav a strong{font-size:12px}
+ .public-mobile-drawer nav a small{margin-top:2px;color:#8a7780;font-size:9px;line-height:1.35}
+ .topbar .brand-logo{max-width:calc(100% - 164px)!important}
+ .topbar .top-actions{gap:1px!important}
+}
+@media(max-width:430px){
+ .topbar .brand-logo{max-width:calc(100% - 152px)!important}
+ .public-mobile-menu-button{flex-basis:34px;width:34px;height:34px}
+}
+@keyframes publicDrawerIn{from{transform:translateX(-100%)}to{transform:translateX(0)}}
