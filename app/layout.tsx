@@ -10,6 +10,7 @@ import "./admin/admin.css";
 import "./admin/identity-admin.css";
 import "./admin/support/support-admin.css";
 import "./admin/enquiries/enquiries-admin.css";
+import "./admin/admin-ux-overrides.css";
 
 export const metadata: Metadata = {
   title: "Sri Gaur Nitai",
