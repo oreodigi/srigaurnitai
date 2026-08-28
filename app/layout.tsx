@@ -37,6 +37,8 @@ export async function generateMetadata():Promise<Metadata>{
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#720b32" };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><AppChrome>{children}</AppChrome></body></html>;
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+ const {data:s}=await supabase.from("site_seo_settings").select("organization_schema").limit(1).maybeSingle();
+ const schema=s?.organization_schema&&typeof s.organization_schema==="object"&&Object.keys(s.organization_schema).length?s.organization_schema:null;
+ return <html lang="en"><body>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<AppChrome>{children}</AppChrome></body></html>;
 }
