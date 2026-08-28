@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { BarChart3, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Megaphone, SearchCheck, Settings, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards } from "lucide-react";
+import { BarChart3, BookOpen, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Megaphone, SearchCheck, Settings, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards } from "lucide-react";
 
 const groups = [
   {label:"Content & Campaigns", icon:Megaphone, items:[
@@ -20,7 +20,7 @@ const groups = [
     ["Site Users","/admin/users",UsersRound],["Staff & Roles","/admin/staff",ShieldCheck],["Support Desk","/admin/support",Headphones],["Enquiries","/admin/enquiries",FileText],
   ]},
   {label:"Content Tools", icon:Library, items:[["CMS & Banners","CMS & Banners",Library]], links:[
-    ["Media Library","/admin/media",Library],["Pages","/admin/pages",FileText],
+    ["Blog & Daily Quotes","/admin/blog",BookOpen],["Media Library","/admin/media",Library],["Pages","/admin/pages",FileText],
   ]},
   {label:"Settings", icon:Settings, links:[
     ["Settings Home","/admin/settings",Settings],["Website UI & Theme","/admin/ui",SlidersHorizontal],["SEO & Social","/admin/seo",SearchCheck],["Integrations","/admin/integrations",Sparkles],["Advanced Data","/admin/advanced",BarChart3],
@@ -34,7 +34,7 @@ function triggerLegacy(label:string){
 
 export default function AdminExperienceEnhancer(){
   const [navTarget,setNavTarget]=useState<HTMLElement|null>(null);
-  const [open,setOpen]=useState<Record<string,boolean>>({"Content & Campaigns":true,"Businesses & Commerce":true,"Community & Operations":true,"Settings":true});
+  const [open,setOpen]=useState<Record<string,boolean>>({"Content & Campaigns":true,"Businesses & Commerce":true,"Community & Operations":true,"Content Tools":true,"Settings":true});
 
   useEffect(()=>{
     let opened=false;
