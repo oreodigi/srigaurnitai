@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { BarChart3, BookOpen, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Menu, SearchCheck, Settings, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards, X } from "lucide-react";
+import { BarChart3, BookOpen, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, FileText, Headphones, LayoutDashboard, Library, Menu, SearchCheck, Settings, Share2, ShieldCheck, SlidersHorizontal, Sparkles, Tags, Trophy, UsersRound, Video, WalletCards, X } from "lucide-react";
 import { BrandIcon } from "@/components/BrandLogo";
 
 const groups=[
  {label:"Content & Campaigns",icon:Trophy,items:[
-  ["Contests","/admin/manage/contests",Trophy],["Contest Categories","/admin/manage/contest-categories",Tags],["Campaigns","/admin/manage/campaigns",Sparkles],["Review Contest Submissions","/admin/reviews/contests",Video],["Events & Requests","/admin?open=Events%20%26%20Requests",CalendarHeart],["Event Services","/admin/manage/event-categories",Tags],["Publishing Packages","/admin/manage/publishing-packages",WalletCards],["Review Event Submissions","/admin/reviews/events",CalendarHeart]
+  ["Contests","/admin/manage/contests",Trophy],["Contest Categories","/admin/manage/contest-categories",Tags],["Campaigns","/admin/manage/campaigns",Sparkles],["Review Contest Submissions","/admin/reviews/contests",Video],["Events & Requests","/admin?open=Events%20%26%20Requests",CalendarHeart],["Event Services","/admin/manage/event-categories",Tags],["Publishing Packages","/admin/manage/publishing-packages",WalletCards],["Review Event Submissions","/admin/reviews/events",CalendarHeart],["Social Publishing Hub","/admin/social",Share2]
  ]},
  {label:"Businesses & Commerce",icon:BriefcaseBusiness,items:[
   ["Business Directory","/admin/manage/businesses",BriefcaseBusiness],["Review Business Listings","/admin/reviews/businesses",ShieldCheck],["Business Categories","/admin/manage/business-categories",Tags],["Business Plans","/admin/manage/business-plans",CreditCard],["Payments","/admin?open=Payments",CreditCard],["Enquiries","/admin/enquiries",FileText]
