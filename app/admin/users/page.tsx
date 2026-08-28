@@ -1,0 +1,23 @@
+"use client";
+import Link from "next/link";
+import { useEffect,useMemo,useState } from "react";
+import { ArrowLeft,BriefcaseBusiness,Search,ShieldCheck,UserRound,UsersRound } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { BrandIcon } from "@/components/BrandLogo";
+
+const STAFF_ROLES=["admin","moderator","verification","support","finance","content_manager"];
+export default function AdminUsersPage(){
+ const [user,setUser]=useState<any>(null),[allowed,setAllowed]=useState(false),[loading,setLoading]=useState(true),[profiles,setProfiles]=useState<any[]>([]),[roles,setRoles]=useState<any[]>([]),[q,setQ]=useState(""),[filter,setFilter]=useState("all"),[notice,setNotice]=useState("");
+ async function load(){const [p,r]=await Promise.all([supabase.from("profiles").select("*").order("created_at",{ascending:false}),supabase.from("user_roles").select("*")]);setProfiles(p.data||[]);setRoles(r.data||[])}
+ useEffect(()=>{(async()=>{const {data:{user:u}}=await supabase.auth.getUser();setUser(u);if(!u){setLoading(false);return}const {data:r}=await supabase.from("user_roles").select("role").eq("user_id",u.id).eq("role","admin").maybeSingle();if(!r){setLoading(false);return}setAllowed(true);await load();setLoading(false)})()},[]);
+ const roleMap=useMemo(()=>roles.reduce((a:any,r:any)=>{(a[r.user_id]??=[]).push(r.role);return a},{}),[roles]);
+ const siteUsers=profiles.filter(p=>!(roleMap[p.id]||[]).some((r:string)=>STAFF_ROLES.includes(r)));
+ const visible=siteUsers.filter(p=>{const rs=roleMap[p.id]||[];const text=`${p.full_name||""} ${p.email||""} ${p.mobile||""}`.toLowerCase();return (!q||text.includes(q.toLowerCase()))&&(filter==="all"||filter==="business"&&rs.includes("business")||filter==="member"&&!rs.includes("business"))});
+ async function setBusiness(id:string,on:boolean){if(on)await supabase.from("user_roles").upsert({user_id:id,role:"business"});else await supabase.from("user_roles").delete().eq("user_id",id).eq("role","business");await load();setNotice(on?"Business role enabled.":"Business role removed.")}
+ if(loading)return <div className="ma-loader"><BrandIcon size={110}/><strong>Loading Site Users</strong></div>;
+ if(!user||!allowed)return <div className="admin-auth-cover"><div className="admin-auth-card"><BrandIcon size={80}/><h1>Restricted</h1><p>Administrator access required.</p><Link className="admin-primary" href="/admin">Admin Login</Link></div></div>;
+ return <div className="identity-admin"><header><div><Link href="/admin"><ArrowLeft size={15}/>Back to Admin</Link><h1>Site Users</h1><p>Customers, participants and business owners. Staff accounts are managed separately.</p></div><Link className="identity-staff-link" href="/admin/staff"><ShieldCheck size={15}/>Staff & Roles</Link></header>
+ <div className="identity-stats"><article><UsersRound/><span>Site users</span><strong>{siteUsers.length}</strong></article><article><UserRound/><span>Members</span><strong>{siteUsers.filter(p=>!(roleMap[p.id]||[]).includes("business")).length}</strong></article><article><BriefcaseBusiness/><span>Business owners</span><strong>{siteUsers.filter(p=>(roleMap[p.id]||[]).includes("business")).length}</strong></article></div>
+ <main><div className="identity-toolbar"><div className="identity-search"><Search size={16}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search name, email or phone…"/></div><div className="identity-tabs">{[["all","All Users"],["member","Members"],["business","Business Owners"]].map(([k,l])=><button className={filter===k?"active":""} key={k} onClick={()=>setFilter(k)}>{l}</button>)}</div></div>
+ <div className="identity-table"><div className="identity-row identity-head"><span>User</span><span>Contact</span><span>Account type</span><span>Joined</span><span>Actions</span></div>{visible.map(p=>{const rs=roleMap[p.id]||[];const business=rs.includes("business");return <div className="identity-row" key={p.id}><div><strong>{p.full_name||"Unnamed User"}</strong><small>{p.city||""}{p.state?`, ${p.state}`:""}</small></div><div><span>{p.email||"No email"}</span><small>{p.mobile||"No phone"}</small></div><div><em className={business?"identity-badge business":"identity-badge"}>{business?"Business Owner":"Member"}</em></div><div><span>{p.created_at?new Date(p.created_at).toLocaleDateString("en-IN"):"—"}</span></div><div><button onClick={()=>setBusiness(p.id,!business)}>{business?"Remove Business Role":"Make Business Owner"}</button></div></div>})}{!visible.length&&<div className="identity-empty">No matching site users.</div>}</div></main>{notice&&<div className="ma-toast">{notice}</div>}</div>;
+}
