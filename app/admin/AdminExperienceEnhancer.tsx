@@ -37,7 +37,15 @@ export default function AdminExperienceEnhancer(){
   const [open,setOpen]=useState<Record<string,boolean>>({"Content & Campaigns":true,"Businesses & Commerce":true,"Community & Operations":true,"Settings":true});
 
   useEffect(()=>{
-    const sync=()=>setNavTarget(document.querySelector<HTMLElement>(".ma-side nav"));
+    let opened=false;
+    const sync=()=>{
+      const target=document.querySelector<HTMLElement>(".ma-side nav");
+      setNavTarget(target);
+      if(target&&!opened){
+        const requested=new URLSearchParams(window.location.search).get("open");
+        if(requested){opened=true;setTimeout(()=>triggerLegacy(requested),80)}
+      }
+    };
     sync();
     const ob=new MutationObserver(sync); ob.observe(document.body,{subtree:true,childList:true});
     return()=>ob.disconnect();
