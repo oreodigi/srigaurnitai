@@ -11,7 +11,7 @@ const base="https://srigaurnitai.vercel.app";
 
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
  const {slug}=await params;
- const {data:b}=await supabase.from("businesses").select("name,description,photos,logo_url,seo_title,seo_description,seo_keywords,seo_canonical_url,seo_og_title,seo_og_description,seo_og_image_url,seo_noindex").eq("slug",slug).maybeSingle();
+ const {data:b}=await supabase.from("businesses").select("name,description,photos,logo_url,seo_title,seo_description,seo_keywords,seo_canonical_url,seo_og_title,seo_og_description,seo_og_image_url,seo_noindex").eq("slug",slug).eq("status","approved").maybeSingle();
  if(!b)return {};
  const title=b.seo_title||b.name;
  const description=b.seo_description||b.description||`View ${b.name} on Sri Gaur Nitai.`;
