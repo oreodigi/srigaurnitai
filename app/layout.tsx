@@ -39,6 +39,9 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
  const {data:s}=await supabase.from("site_seo_settings").select("organization_schema").limit(1).maybeSingle();
- const schema=s?.organization_schema&&typeof s.organization_schema==="object"&&Object.keys(s.organization_schema).length?s.organization_schema:null;
+ let schema:any=null;
+ const raw=s?.organization_schema;
+ if(raw&&typeof raw==="object"&&Object.keys(raw).length)schema=raw;
+ if(typeof raw==="string"){try{const parsed=JSON.parse(raw);if(parsed&&typeof parsed==="object")schema=parsed}catch{}}
  return <html lang="en"><body>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<AppChrome>{children}</AppChrome></body></html>;
 }
