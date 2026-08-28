@@ -32,6 +32,7 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
   const socials=business.social_links||{};
   const pageUrl=business.seo_canonical_url||`${base}/businesses/${slug}`;
   const shareDescription=business.seo_og_description||business.seo_description||business.description||`${business.name} on Sri Gaur Nitai.`;
+  const schema=business.seo_schema&&typeof business.seo_schema==="object"&&Object.keys(business.seo_schema).length?business.seo_schema:null;
   const isWedding=String(business.business_categories?.name||"").toLowerCase().includes("wedding")||business.name.toLowerCase().includes("wedding");
   const packages=isWedding?[
     {name:"Silver Package",price:"₹45,000",features:["1 Cinematographer","1 Photographer","Full-day coverage","3–4 minute highlight film","200+ edited photos"]},
@@ -42,7 +43,7 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
     {name:"Popular",price:"₹9,999+",featured:true,features:["Priority scheduling","Expanded service coverage","Premium deliverables","WhatsApp support"]},
     {name:"Premium",price:"Custom",features:["Custom scope","Dedicated coordinator","Priority delivery","Add-on services"]}
   ];
-  return <div className="page business-detail-page">
+  return <>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<div className="page business-detail-page">
     <div className="detail-back"><Link href="/businesses"><ArrowLeft size={18}/> Back to Businesses</Link></div>
     <section className="business-cover" style={{backgroundImage:`linear-gradient(0deg,rgba(31,4,16,.91),rgba(31,4,16,.08)),url(${photo})`}}>
       <div className="business-cover-copy"><div className="gold-badge">{business.is_featured ? "Featured Business" : "Verified Community Business"}</div><h1>{business.name} <ShieldCheck size={20} style={{display:"inline"}}/></h1><p>{business.business_categories?.name} {business.business_subcategories?.name ? `• ${business.business_subcategories.name}` : ""}</p><div className="profile-meta-strip"><span><Star size={14} fill="currentColor"/>4.8 (128 reviews)</span><span>• 8+ years demo experience</span><span><MapPin size={13}/>{business.city}, {business.state}</span></div></div>
@@ -77,5 +78,5 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
 
     <section className="detail-panel section" id="inquiry"><h2>Send an Inquiry</h2><p>Share your requirement and the business can follow up directly.</p><BusinessInquiryForm businessId={business.id} businessName={business.name}/></section>
     <section className="section pretty-panel" style={{textAlign:"center",background:"linear-gradient(110deg,#fff6e7,#fff)"}}><h2 style={{justifyContent:"center"}}>Ready to connect with {business.name}?</h2><div style={{display:"flex",justifyContent:"center",gap:8,flexWrap:"wrap"}}>{whatsapp&&<a className="btn btn-primary" href={whatsapp} target="_blank" rel="noreferrer"><MessageCircle size={15}/> WhatsApp Now</a>}<a className="btn btn-gold" href="#inquiry">Send Inquiry</a></div></section>
-  </div>;
+  </div></>;
 }
