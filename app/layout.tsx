@@ -14,6 +14,7 @@ import "./admin/support/support-admin.css";
 import "./admin/enquiries/enquiries-admin.css";
 import "./admin/admin-ux-overrides.css";
 import "./admin/seo/seo-admin.css";
+import "./ui-hotfixes.css";
 
 export async function generateMetadata():Promise<Metadata>{
  const {data:s}=await supabase.from("site_seo_settings").select("*").limit(1).maybeSingle();
