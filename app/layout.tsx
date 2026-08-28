@@ -8,6 +8,7 @@ import "./desktop.css";
 import "./support/support.css";
 import "./admin/admin.css";
 import "./admin/support/support-admin.css";
+import "./admin/enquiries/enquiries-admin.css";
 
 export const metadata: Metadata = {
   title: "Sri Gaur Nitai",
