@@ -7,7 +7,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   supabase.from("contests").select("slug,updated_at,seo_noindex").eq("is_active",true),
   supabase.from("event_categories").select("slug,updated_at,seo_noindex").eq("is_active",true),
   supabase.from("businesses").select("slug,updated_at,seo_noindex").eq("status","approved"),
-  supabase.from("pages").select("slug,updated_at,is_published").eq("is_published",true)
+  supabase.from("site_pages").select("slug,updated_at,is_published").eq("is_published",true)
  ]);
  const base=s?.canonical_base_url||"https://srigaurnitai.vercel.app";
  const fixed=["","/contests","/events","/businesses","/videos","/winners"].map(path=>({url:`${base}${path}`,changeFrequency:"weekly" as const,priority:path?0.8:1}));
