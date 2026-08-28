@@ -7,7 +7,9 @@ import { BarChart3, BriefcaseBusiness, CalendarHeart, ChevronDown, CreditCard, F
 
 const groups = [
   {label:"Content & Campaigns", icon:Megaphone, items:[
-    ["Contests","Contests",Trophy],["Contest Categories","Contest Categories",Tags],["Contest Submissions","Contest Submissions",Video],["Campaigns","Campaigns",Megaphone],["Events & Requests","Events & Requests",CalendarHeart],["Event Categories","Event Categories",Tags],["Publishing Packages","Publishing Packages",WalletCards],
+    ["Contests","Contests",Trophy],["Contest Categories","Contest Categories",Tags],["Campaigns","Campaigns",Megaphone],["Events & Requests","Events & Requests",CalendarHeart],["Event Categories","Event Categories",Tags],["Publishing Packages","Publishing Packages",WalletCards],
+  ], links:[
+    ["Review Contest Submissions","/admin/reviews/contests",Video],["Review Event Submissions","/admin/reviews/events",CalendarHeart],
   ]},
   {label:"Businesses & Commerce", icon:BriefcaseBusiness, items:[
     ["Businesses","Businesses",BriefcaseBusiness],["Business Categories","Business Categories",Tags],["Business Plans","Business Plans",CreditCard],["Payments","Payments",CreditCard],
