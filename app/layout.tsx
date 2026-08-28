@@ -18,6 +18,7 @@ import "./admin/seo/seo-admin.css";
 import "./admin/admin-experience-v2.css";
 import "./ui-hotfixes.css";
 import "./mobile-header-fix.css";
+import "./public-navigation.css";
 
 export async function generateMetadata():Promise<Metadata>{
  const {data:s}=await supabase.from("site_seo_settings").select("*").limit(1).maybeSingle();
