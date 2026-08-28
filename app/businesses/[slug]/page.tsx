@@ -1,11 +1,24 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Clock, ExternalLink, Globe2, Instagram, Mail, MapPin, MessageCircle, Phone, Play, ShieldCheck, Star, Youtube } from "lucide-react";
 import { notFound } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { BusinessInquiryForm } from "@/components/BusinessInquiryForm";
-import { ShareProfileButton } from "@/components/ShareProfileButton";
+import { SocialShare } from "@/components/SocialShare";
 
 const fallback="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=85";
+const base="https://srigaurnitai.vercel.app";
+
+export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{
+ const {slug}=await params;
+ const {data:b}=await supabase.from("businesses").select("name,description,photos,logo_url,seo_title,seo_description,seo_keywords,seo_canonical_url,seo_og_title,seo_og_description,seo_og_image_url,seo_noindex").eq("slug",slug).maybeSingle();
+ if(!b)return {};
+ const title=b.seo_title||b.name;
+ const description=b.seo_description||b.description||`View ${b.name} on Sri Gaur Nitai.`;
+ const canonical=b.seo_canonical_url||`${base}/businesses/${slug}`;
+ const image=b.seo_og_image_url||b.logo_url||(b.photos?.[0])||undefined;
+ return {title,description,keywords:b.seo_keywords||undefined,alternates:{canonical},robots:{index:!b.seo_noindex,follow:true},openGraph:{type:"website",title:b.seo_og_title||title,description:b.seo_og_description||description,url:canonical,images:image?[{url:image}]:undefined},twitter:{card:"summary_large_image",title:b.seo_og_title||title,description:b.seo_og_description||description,images:image?[image]:undefined}};
+}
 
 export default async function BusinessDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -17,6 +30,8 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
   const maps = business.google_maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
   const whatsapp = business.whatsapp ? `https://wa.me/${String(business.whatsapp).replace(/\D/g,"")}` : null;
   const socials=business.social_links||{};
+  const pageUrl=business.seo_canonical_url||`${base}/businesses/${slug}`;
+  const shareDescription=business.seo_og_description||business.seo_description||business.description||`${business.name} on Sri Gaur Nitai.`;
   const isWedding=String(business.business_categories?.name||"").toLowerCase().includes("wedding")||business.name.toLowerCase().includes("wedding");
   const packages=isWedding?[
     {name:"Silver Package",price:"₹45,000",features:["1 Cinematographer","1 Photographer","Full-day coverage","3–4 minute highlight film","200+ edited photos"]},
@@ -41,6 +56,7 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
       {business.email && <a className="detail-action" href={`mailto:${business.email}`}><Mail size={19}/><span>Email</span></a>}
       <a className="detail-action" href={maps} target="_blank" rel="noreferrer"><MapPin size={19}/><span>Directions</span></a>
     </div>
+    <SocialShare title={business.seo_og_title||business.seo_title||business.name} description={shareDescription} url={pageUrl}/>
 
     <div className="business-section-grid">
       <div>
@@ -60,6 +76,6 @@ export default async function BusinessDetailPage({ params }: { params: Promise<{
     </div>
 
     <section className="detail-panel section" id="inquiry"><h2>Send an Inquiry</h2><p>Share your requirement and the business can follow up directly.</p><BusinessInquiryForm businessId={business.id} businessName={business.name}/></section>
-    <section className="section pretty-panel" style={{textAlign:"center",background:"linear-gradient(110deg,#fff6e7,#fff)"}}><h2 style={{justifyContent:"center"}}>Ready to connect with {business.name}?</h2><div style={{display:"flex",justifyContent:"center",gap:8,flexWrap:"wrap"}}>{whatsapp&&<a className="btn btn-primary" href={whatsapp} target="_blank" rel="noreferrer"><MessageCircle size={15}/> WhatsApp Now</a>}<a className="btn btn-gold" href="#inquiry">Send Inquiry</a><ShareProfileButton title={business.name}/></div></section>
+    <section className="section pretty-panel" style={{textAlign:"center",background:"linear-gradient(110deg,#fff6e7,#fff)"}}><h2 style={{justifyContent:"center"}}>Ready to connect with {business.name}?</h2><div style={{display:"flex",justifyContent:"center",gap:8,flexWrap:"wrap"}}>{whatsapp&&<a className="btn btn-primary" href={whatsapp} target="_blank" rel="noreferrer"><MessageCircle size={15}/> WhatsApp Now</a>}<a className="btn btn-gold" href="#inquiry">Send Inquiry</a></div></section>
   </div>;
 }
