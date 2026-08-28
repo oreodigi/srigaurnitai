@@ -30,7 +30,8 @@ export default async function EventDetailPage({params}:{params:Promise<{slug:str
  const cover=event.image_url||event.seo_og_image_url||fallback;
  const pageUrl=event.seo_canonical_url||`${base}/events/${slug}`;
  const shareDescription=event.seo_og_description||event.seo_description||event.description||`Publish your ${event.name} event video with Sri Gaur Nitai.`;
- return <div className="page">
+ const schema=event.seo_schema&&typeof event.seo_schema==="object"&&Object.keys(event.seo_schema).length?event.seo_schema:null;
+ return <>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<div className="page">
   <div className="detail-back"><Link href="/events"><ArrowLeft size={18}/> Back to Events</Link></div>
   <section className="contest-detail-hero" style={{backgroundImage:`linear-gradient(90deg,rgba(82,4,37,.88),rgba(82,4,37,.35)),url(${cover})`}}><div className="contest-detail-copy"><span className="gold-badge"><CalendarHeart size={13}/>{event.name}</span><h1>{event.name} Video Publishing</h1><p>{event.description||`Celebrate and publish your ${event.name.toLowerCase()} memories through Sri Gaur Nitai.`}</p><div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:17}}><Link href={`/events/submit?category=${event.slug}`} className="btn btn-gold">Create Event Request</Link><Link href="/videos?type=event" className="btn btn-outline"><Play size={15}/>Published Videos</Link></div></div></section>
   <SocialShare title={event.seo_og_title||event.seo_title||`${event.name} Event Video Service`} description={shareDescription} url={pageUrl}/>
@@ -41,5 +42,5 @@ export default async function EventDetailPage({params}:{params:Promise<{slug:str
   <section className="section"><div className="section-head"><div><h2><Gift size={18}/>Publishing Packages</h2><p>Choose the level of publishing support you need.</p></div></div><div className="package-grid">{(packages||[]).map((p:any)=><Link className="package-card" href={`/events/submit?category=${event.slug}&package=${p.id}`} key={p.id}>{p.badge&&<span className="gold-badge">{p.badge}</span>}<h3>{p.name}</h3><b>{Number(p.price_modifier)?`+ ₹${Number(p.price_modifier).toLocaleString("en-IN")}`:"Base Price"}</b><p>{p.description}</p><ul>{(p.features||[]).map((f:string)=><li key={f}>✓ {f}</li>)}</ul><span className="btn btn-primary">Choose Package</span></Link>)}</div></section>
   {videos?.length?<section className="section"><div className="section-head"><div><h2><Play size={18}/>Recent Event Videos</h2><p>Publicly approved event videos from Sri Gaur Nitai.</p></div></div><div className="video-grid">{videos.map((v:any)=><Link className="video-card" href={`/videos/${v.id}`} key={v.id}><div className="video-thumb" style={{backgroundImage:`url(${v.thumbnail_url||cover})`}}><span className="play-orb"><Play size={20}/></span></div><div className="video-copy"><span>Published Event</span><h3>{v.title}</h3><p>{v.participant_name}</p></div></Link>)}</div></section>:null}
   <section className="section pretty-panel" style={{textAlign:"center"}}><h2 style={{justifyContent:"center"}}>Ready to publish your {event.name.toLowerCase()}?</h2><Link className="btn btn-primary" href={`/events/submit?category=${event.slug}`}>Start Event Request</Link></section>
- </div>;
+ </div></>;
 }
