@@ -1,0 +1,23 @@
+"use client";
+import {createContext,useContext,useEffect,useMemo,useState} from "react";
+import {supabase} from "@/lib/supabase";
+
+export type SiteUISettings={
+ id?:string;site_name?:string;desktop_logo_url?:string|null;mobile_logo_url?:string|null;header_logo_url?:string|null;footer_logo_url?:string|null;splash_logo_url?:string|null;favicon_url?:string|null;
+ primary_color?:string;secondary_color?:string;accent_color?:string;background_color?:string;surface_color?:string;text_color?:string;muted_color?:string;success_color?:string;danger_color?:string;
+ font_family?:string;heading_font_family?:string;base_font_size?:number;border_radius?:number;card_shadow?:string;
+ header_style?:string;header_sticky?:boolean;show_header_logo?:boolean;show_header_site_name?:boolean;show_header_tagline?:boolean;show_header_videos?:boolean;show_header_notifications?:boolean;show_header_account?:boolean;desktop_nav_items?:any[];
+ footer_style?:string;show_footer_logo?:boolean;show_footer_description?:boolean;show_footer_social?:boolean;show_footer_legal?:boolean;footer_columns?:any[];
+ mobile_header_style?:string;mobile_show_site_name?:boolean;mobile_show_tagline?:boolean;mobile_bottom_nav?:boolean;mobile_bottom_nav_items?:any[];mobile_card_density?:string;mobile_content_padding?:number;
+ desktop_content_width?:number;desktop_content_padding?:number;
+ show_home_hero?:boolean;show_home_services?:boolean;show_home_memories?:boolean;show_home_contests?:boolean;show_home_businesses?:boolean;show_home_videos?:boolean;show_home_winners?:boolean;show_context_help?:boolean;show_social_share?:boolean;animation_level?:string;custom_css?:string|null;metadata?:any;
+};
+const defaults:SiteUISettings={site_name:"Sri Gaur Nitai",primary_color:"#7d0739",secondary_color:"#5f062d",accent_color:"#f6b51b",background_color:"#fffaf1",surface_color:"#fffdf9",text_color:"#321820",muted_color:"#78666b",success_color:"#2f8a49",danger_color:"#b42318",font_family:"Inter",heading_font_family:"Georgia",base_font_size:16,border_radius:18,header_sticky:true,show_header_logo:true,show_header_site_name:true,show_header_tagline:true,show_header_videos:true,show_header_notifications:true,show_header_account:true,mobile_show_site_name:true,mobile_show_tagline:false,mobile_bottom_nav:true,mobile_content_padding:14,desktop_content_width:1440,desktop_content_padding:42,show_home_hero:true,show_home_services:true,show_home_memories:true,show_home_contests:true,show_home_businesses:true,show_home_videos:true,show_home_winners:true,show_context_help:true,show_social_share:true,animation_level:"normal"};
+const C=createContext<SiteUISettings>(defaults);
+export function useSiteUI(){return useContext(C)}
+export function SiteUIProvider({children}:{children:React.ReactNode}){
+ const [s,setS]=useState<SiteUISettings>(defaults);
+ useEffect(()=>{supabase.from("site_ui_settings").select("*").limit(1).maybeSingle().then(({data})=>{if(data)setS({...defaults,...data})})},[]);
+ const css=useMemo(()=>`:root{--cream:${s.background_color};--paper:${s.surface_color};--wine:${s.primary_color};--wine2:${s.secondary_color};--gold:${s.accent_color};--ink:${s.text_color};--muted:${s.muted_color};--green:${s.success_color};--danger:${s.danger_color};--ui-radius:${s.border_radius}px;--ui-shadow:${s.card_shadow||"0 10px 30px rgba(84,35,38,.09)"};--ui-mobile-pad:${s.mobile_content_padding}px;--ui-desktop-width:${s.desktop_content_width}px;--ui-desktop-pad:${s.desktop_content_padding}px}body{font-family:${s.font_family},Inter,ui-sans-serif,system-ui,sans-serif;font-size:${s.base_font_size}px}.page-title h1,.section-head h2,.brand-logo-copy strong,.hero-banner h1,.hero-banner h2{font-family:${s.heading_font_family},Georgia,serif}.page{padding-left:var(--ui-mobile-pad);padding-right:var(--ui-mobile-pad)}${s.header_sticky===false?".topbar{position:relative!important}":""}${s.mobile_bottom_nav===false?"@media(max-width:1023px){.bottom-nav{display:none!important}.app-shell{padding-bottom:0!important}}":""}${s.animation_level==="none"?"*,*:before,*:after{animation:none!important;transition:none!important}":""}${s.custom_css||""}`,[s]);
+ return <C.Provider value={s}><style dangerouslySetInnerHTML={{__html:css}}/>{children}</C.Provider>
+}
