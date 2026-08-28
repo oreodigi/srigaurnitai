@@ -8,16 +8,16 @@ import { BrandIcon } from "@/components/BrandLogo";
 
 const groups=[
  {label:"Content & Campaigns",icon:Trophy,items:[
-  ["Contests","/admin?open=Contests",Trophy],["Contest Categories","/admin?open=Contest%20Categories",Tags],["Campaigns","/admin?open=Campaigns",Sparkles],["Review Contest Submissions","/admin/reviews/contests",Video],["Events & Requests","/admin?open=Events%20%26%20Requests",CalendarHeart],["Event Categories","/admin?open=Event%20Categories",Tags],["Publishing Packages","/admin?open=Publishing%20Packages",WalletCards],["Review Event Submissions","/admin/reviews/events",CalendarHeart]
+  ["Contests","/admin/manage/contests",Trophy],["Contest Categories","/admin/manage/contest-categories",Tags],["Campaigns","/admin/manage/campaigns",Sparkles],["Review Contest Submissions","/admin/reviews/contests",Video],["Events & Requests","/admin?open=Events%20%26%20Requests",CalendarHeart],["Event Services","/admin/manage/event-categories",Tags],["Publishing Packages","/admin/manage/publishing-packages",WalletCards],["Review Event Submissions","/admin/reviews/events",CalendarHeart]
  ]},
  {label:"Businesses & Commerce",icon:BriefcaseBusiness,items:[
-  ["Businesses","/admin?open=Businesses",BriefcaseBusiness],["Review Business Listings","/admin/reviews/businesses",ShieldCheck],["Business Categories","/admin?open=Business%20Categories",Tags],["Business Plans","/admin?open=Business%20Plans",CreditCard],["Payments","/admin?open=Payments",CreditCard],["Enquiries","/admin/enquiries",FileText]
+  ["Business Directory","/admin/manage/businesses",BriefcaseBusiness],["Review Business Listings","/admin/reviews/businesses",ShieldCheck],["Business Categories","/admin/manage/business-categories",Tags],["Business Plans","/admin/manage/business-plans",CreditCard],["Payments","/admin?open=Payments",CreditCard],["Enquiries","/admin/enquiries",FileText]
  ]},
  {label:"Community & Operations",icon:UsersRound,items:[
   ["Site Users","/admin/users",UsersRound],["Staff & Roles","/admin/staff",ShieldCheck],["Support Desk","/admin/support",Headphones]
  ]},
  {label:"Content Tools",icon:Library,items:[
-  ["Blog & Daily Quotes","/admin/blog",BookOpen],["CMS & Banners","/admin?open=CMS%20%26%20Banners",FileText],["Media Library","/admin/media",Library],["Pages & Policies","/admin/pages",FileText]
+  ["Blog & Daily Quotes","/admin/blog",BookOpen],["CMS Content","/admin/manage/content",FileText],["Media Library","/admin/media",Library],["Pages & Policies","/admin/pages",FileText]
  ]},
  {label:"Settings",icon:Settings,items:[
   ["Settings Home","/admin/settings",Settings],["Website UI & Theme","/admin/ui",SlidersHorizontal],["SEO & Social","/admin/seo",SearchCheck],["Integrations","/admin/integrations",Sparkles],["Advanced Data","/admin/advanced",BarChart3]
