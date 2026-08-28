@@ -8,7 +8,7 @@ import { SocialShare } from "@/components/SocialShare";
 const art:Record<string,string>={
   "Singing":"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1500&q=85",
   "Dancing":"https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1500&q=85",
-  "Kids Content":"https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=1500&q=85",
+  "Kids Content":"https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9c?auto=format&fit=crop&w=1500&q=85",
   "Short Films":"https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1500&q=85",
   "Educational Content":"https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1500&q=85",
 };
@@ -36,7 +36,8 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
   const p1=Number(contest.first_prize||0),p2=Number(contest.second_prize||0),p3=Number(contest.third_prize||0);
   const pageUrl=contest.seo_canonical_url||`${base}/contests/${slug}`;
   const shareText=contest.seo_og_description||contest.seo_description||contest.subtitle||contest.description||"Join this Sri Gaur Nitai contest.";
-  return <div className="page">
+  const schema=contest.seo_schema&&typeof contest.seo_schema==="object"&&Object.keys(contest.seo_schema).length?contest.seo_schema:null;
+  return <>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<div className="page">
     <section className="contest-detail-hero" style={{backgroundImage:`url(${cover})`}}><div className="contest-detail-copy"><span className="gold-badge"><Trophy size={13}/>{category}</span><h1>{contest.title}</h1><p>{contest.description}</p><div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:17}}><Link href={`/contests/${slug}/submit`} className="btn btn-gold"><UploadCloud size={16}/> Submit Video</Link><Link href={`/videos?type=contest`} className="btn btn-outline"><Play size={15}/> Watch Entries</Link></div></div></section>
 
     <section className="detail-stat-grid">
@@ -56,5 +57,5 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
       <section className="pretty-panel" id="submissions"><h2><UsersRound size={20}/> Recent Public Submissions</h2>{videos?.length?<div className="submission-showcase">{videos.map((v:any)=><Link className="submission-tile" href={`/videos/${v.id}`} key={v.id}><img src={v.thumbnail_url||cover} alt=""/><div><h3>{v.title}</h3><p>by {v.participant_name||"Sri Gaur Nitai participant"}</p></div><Play size={18}/></Link>)}</div>:<div className="empty-mini">Approved public submissions will appear here. Be among the first to participate.</div>}<Link href="/videos?type=contest" className="btn btn-outline" style={{marginTop:12}}>View All Public Videos</Link></section>
     </div>
     <section className="section pretty-panel" style={{background:"linear-gradient(110deg,#780636,#a31b50)",color:"white"}}><h2 style={{color:"#fff"}}><CircleHelp size={20}/> Need Help?</h2><p style={{color:"#f8e7e9"}}>Questions about eligibility, uploads or payments? Use Support from your account and our team can assist with the entry.</p><Link href={`/support?type=contest&id=${contest.id}`} className="btn btn-gold">Open Support</Link></section>
-  </div>;
+  </div></>;
 }
