@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowLeft, BarChart3, FileText, Library, Plug, SearchCheck, Settings, SlidersHorizontal, Sparkles } from "lucide-react";
+import { ArrowLeft, BarChart3, FileText, KeyRound, Library, Plug, SearchCheck, Settings, SlidersHorizontal, Sparkles } from "lucide-react";
 
 const cards=[
  {title:"Website UI & Theme",desc:"Logo variants, colors, typography, header, footer, mobile layout and module visibility.",href:"/admin/ui",icon:SlidersHorizontal},
+ {title:"Authentication",desc:"Control email/password, email OTP, SMS login and SMS signup availability.",href:"/admin/authentication",icon:KeyRound},
  {title:"SEO & Social",desc:"Global SEO defaults, social metadata, indexing, sitemaps and content SEO.",href:"/admin/seo",icon:SearchCheck},
- {title:"Integrations",desc:"Razorpay, Google Maps, Mux and other external services.",href:"/admin/integrations",icon:Plug},
+ {title:"Integrations",desc:"Razorpay, Google Maps, Mux, SMTP and other external services.",href:"/admin/integrations",icon:Plug},
  {title:"Pages & Policies",desc:"Terms, privacy, refund policy, contest policies and custom pages.",href:"/admin/pages",icon:FileText},
  {title:"Media Library",desc:"Manage reusable images and media used across the platform.",href:"/admin/media",icon:Library},
  {title:"Advanced Data",desc:"Direct operational record access for administrators.",href:"/admin/advanced",icon:BarChart3},
