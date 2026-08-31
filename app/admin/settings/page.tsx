@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, BarChart3, FileText, KeyRound, Library, Plug, SearchCheck, Settings, SlidersHorizontal, Sparkles } from "lucide-react";
+import { ArrowLeft, BarChart3, FileText, IndianRupee, KeyRound, Library, Plug, SearchCheck, Settings, SlidersHorizontal, Sparkles } from "lucide-react";
 
 const cards=[
  {title:"Website UI & Theme",desc:"Logo variants, colors, typography, header, footer, mobile layout and module visibility.",href:"/admin/ui",icon:SlidersHorizontal},
  {title:"Authentication",desc:"Control email/password, email OTP, SMS login and SMS signup availability.",href:"/admin/authentication",icon:KeyRound},
+ {title:"Free / Paid Services",desc:"One global switch for contest fees, event publishing and business subscriptions.",href:"/admin/monetization",icon:IndianRupee},
  {title:"SEO & Social",desc:"Global SEO defaults, social metadata, indexing, sitemaps and content SEO.",href:"/admin/seo",icon:SearchCheck},
  {title:"Integrations",desc:"Razorpay, Google Maps, Mux, SMTP and other external services.",href:"/admin/integrations",icon:Plug},
  {title:"Pages & Policies",desc:"Terms, privacy, refund policy, contest policies and custom pages.",href:"/admin/pages",icon:FileText},
