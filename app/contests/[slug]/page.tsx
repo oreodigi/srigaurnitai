@@ -31,6 +31,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
   if (!contest) notFound();
   const {data:videos}=await supabase.from("public_videos").select("id,title,participant_name,thumbnail_url,status").eq("contest_id",contest.id).eq("status","published").order("published_at",{ascending:false}).limit(4);
   const closes = contest.submission_close_at ? new Date(contest.submission_close_at).toLocaleString("en-IN", { timeZone:"Asia/Kolkata",day:"numeric", month:"short", year:"numeric",hour:"numeric",minute:"2-digit",hour12:true })+" IST" : "Open until announced";
+  const submissionsClosed=!!contest.submission_close_at&&new Date(contest.submission_close_at).getTime()<Date.now();
   const category=contest.contest_categories?.name||"Contest";
   const cover=contest.banner_url||art[category]||"https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1500&q=85";
   const p1=Number(contest.first_prize||0),p2=Number(contest.second_prize||0),p3=Number(contest.third_prize||0);
@@ -38,7 +39,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
   const shareText=contest.seo_og_description||contest.seo_description||contest.subtitle||contest.description||"Join this Sri Gaur Nitai contest.";
   const schema=contest.seo_schema&&typeof contest.seo_schema==="object"&&Object.keys(contest.seo_schema).length?contest.seo_schema:null;
   return <>{schema&&<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,"\\u003c")}}/>}<div className="page">
-    <section className="contest-detail-hero" style={{backgroundImage:`url(${cover})`}}><div className="contest-detail-copy"><span className="gold-badge"><Trophy size={13}/>{category}</span><h1>{contest.title}</h1><p>{contest.description}</p><div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:17}}><Link href={`/contests/${slug}/submit`} className="btn btn-gold"><UploadCloud size={16}/> Submit Video</Link><Link href={`/videos?type=contest`} className="btn btn-outline"><Play size={15}/> Watch Entries</Link></div></div></section>
+    <section className="contest-detail-hero" style={{backgroundImage:`url(${cover})`}}><div className="contest-detail-copy"><span className="gold-badge"><Trophy size={13}/>{category}</span><h1>{contest.title}</h1><p>{contest.description}</p><div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:17}}>{submissionsClosed?<span className="btn btn-outline" style={{cursor:"default"}}><Clock3 size={16}/> Submissions Closed</span>:<Link href={`/contests/${slug}/submit`} className="btn btn-gold"><UploadCloud size={16}/> Submit Video</Link>}<Link href={`/videos?type=contest`} className="btn btn-outline"><Play size={15}/> Watch Entries</Link></div></div></section>
 
     <section className="detail-stat-grid">
       <div className="detail-stat"><span className="detail-stat-icon"><CalendarDays size={18}/></span><div><span>Submission closes (IST)</span><strong>{closes}</strong></div></div>
