@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Building2, Camera, ChevronRight, Gem, MapPin, Music2, Search, Sparkles, Star, Store, UtensilsCrossed, UsersRound } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-const iconMap: Record<string, any> = { Photography: Camera, Education: UsersRound, "Event Management": Sparkles, Restaurants: UtensilsCrossed, Hotels: Building2, Jewellery: Gem, Fashion: Store };
+const iconMap: Record<string, any> = { "Photography & Video Shoot": Camera, "Classical Studio": Music2, "Wedding Services": UsersRound, "Prasadam Services": UtensilsCrossed, "Cake Services": UtensilsCrossed, "Event Management": Sparkles, Jewellery: Gem, "Dham Yatra": MapPin, Hotels: Building2, "Kirtan Services": Music2, "Music Academy": Music2, "Spiritual Online Course": UsersRound, "Sanskrit Course": UsersRound, Books: Store, "Pooja Samagri": Sparkles, "Idol Services": Sparkles };
 const fallbackImages=["https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=82","https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=900&q=82","https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=900&q=82"];
 
 export default async function BusinessesPage({ searchParams }: { searchParams: Promise<{ q?: string; category?: string; city?: string }> }) {
@@ -15,10 +15,11 @@ export default async function BusinessesPage({ searchParams }: { searchParams: P
   if (params.q) query = query.or(`name.ilike.%${params.q}%,description.ilike.%${params.q}%`);
   if (params.city) query = query.eq("city",params.city);
   const { data: rows } = await query;
-  const businesses = (rows || []).filter((b:any)=>!params.category || b.business_categories?.slug===params.category);
+  const activeSlugs = new Set((categories || []).map((c:any)=>c.slug));
+  const businesses = (rows || []).filter((b:any)=>activeSlugs.has(b.business_categories?.slug) && (!params.category || b.business_categories?.slug===params.category));
   const cities = Array.from(new Set((cityRows||[]).map((r:any)=>r.city).filter(Boolean))).sort();
   const featured = businesses.find((b:any)=>b.is_featured) || businesses[0];
-  const popular=(categories||[]).filter((c:any)=>["photography","education","event-management","wedding-services","religious-services","travel"].includes(c.slug)).slice(0,6);
+  const popular=(categories||[]).slice(0,6);
 
   return <div className="page directory-page">
     <div className="page-title-row"><div><h1>Businesses</h1><p>Discover trusted community businesses, teachers, studios and professional services.</p></div><Link className="btn btn-primary" href="/businesses/register">+ List Business</Link></div>
